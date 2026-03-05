@@ -1,206 +1,161 @@
 """
 Practice 08: Movie Streaming Platform (OOAD)
+Task: Model a movie streaming platform where users can browse movies,
+      add to watchlist, watch movies, and rate them.
 
-Scenario: An online movie streaming platform offers a large library of
-films. Users can browse the available movies, add them to their watchlist,
-and rate the ones they've seen. The system keeps track of each user's
-watch history and recommends similar films based on their preferences.
-
-Main Objects:
-  - Movie    — knows: id, title, genre, rating
-  - User     — knows: name; does: add to watchlist, watch, rate
-  - Platform — knows: movie library, users; does: add movie, recommend
+How to run:
+  python practice_08.py
 
 Key Concepts:
-  - Multiple classes collaborating
-  - Lists and sets for collections
-  - Encapsulation with private attributes
-  - Constructor design (__init__)
-  - Business logic (recommendations based on genre)
-
-Course: Professional OOP — by Zohirul Alam Tiemoon
+  - Classes with list fields (collections)
+  - Methods that manipulate collections
+  - Average calculation with running totals
 """
 
 
 class Movie:
-    """Represents a film in the library."""
+    """Movie represents a movie in the streaming library."""
 
-    def __init__(self, movie_id: str, title: str, genre: str):
-        self._movie_id = movie_id
-        self._title = title
-        self._genre = genre
+    def __init__(self, title: str, genre: str, duration: int):
+        """Creates a new Movie with no ratings."""
+        self.title = title
+        self.genre = genre
+        self.duration = duration
         self._total_rating = 0.0
         self._rating_count = 0
 
-    @property
-    def movie_id(self) -> str:
-        return self._movie_id
-
-    @property
-    def title(self) -> str:
-        return self._title
-
-    @property
-    def genre(self) -> str:
-        return self._genre
-
-    def get_average_rating(self) -> float:
-        return 0 if self._rating_count == 0 else self._total_rating / self._rating_count
-
-    def add_rating(self, rating: float):
-        self._total_rating += rating
+    def add_rating(self, score: int):
+        """Adds a rating score (1-5) to the movie."""
+        if score < 1 or score > 5:
+            print(f"  [Error] Rating must be between 1 and 5 (given: {score}).")
+            return
+        self._total_rating += score
         self._rating_count += 1
 
-    def print_info(self):
-        print(f"  [{self._movie_id}] {self._title} | Genre: {self._genre} | "
-              f"Avg Rating: {self.get_average_rating():.1f} ({self._rating_count} ratings)")
+    def average_rating(self) -> float:
+        """Returns the average rating or 0 if no ratings."""
+        if self._rating_count == 0:
+            return 0
+        return self._total_rating / self._rating_count
+
+    def show_info(self):
+        """Prints movie details."""
+        print(f"  Title    : {self.title}")
+        print(f"  Genre    : {self.genre}")
+        print(f"  Duration : {self.duration} min")
+        if self._rating_count > 0:
+            print(f"  Rating   : {self.average_rating():.1f} / 5.0 ({self._rating_count} ratings)")
+        else:
+            print("  Rating   : No ratings yet")
+        print()
 
 
 class User:
-    """Represents a platform user."""
+    """User represents a streaming platform user."""
 
-    def __init__(self, name: str):
-        self._name = name
-        self._watchlist = []
-        self._watch_history = []
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def watch_history(self) -> list:
-        return self._watch_history
+    def __init__(self, username: str):
+        """Creates a new User with empty watchlist and history."""
+        self.username = username
+        self.watchlist = []
+        self.watch_history = []
 
     def add_to_watchlist(self, movie: Movie):
-        self._watchlist.append(movie)
-        print(f"  [OK] {self._name} added '{movie.title}' to watchlist.")
+        """Adds a movie to the user's watchlist."""
+        if movie in self.watchlist:
+            print(f'  [Error] "{movie.title}" is already in {self.username}\'s watchlist.')
+            return
+        self.watchlist.append(movie)
+        print(f'  [OK] "{movie.title}" added to {self.username}\'s watchlist.')
 
     def watch_movie(self, movie: Movie):
-        self._watchlist = [m for m in self._watchlist if m.movie_id != movie.movie_id]
-        self._watch_history.append(movie)
-        print(f"  [OK] {self._name} watched '{movie.title}'.")
-
-    def rate_movie(self, movie: Movie, rating: float):
-        watched = any(m.movie_id == movie.movie_id for m in self._watch_history)
-        if not watched:
-            print(f"  [Error] {self._name} hasn't watched '{movie.title}' yet.")
+        """Moves a movie from watchlist to watch history."""
+        if movie in self.watch_history:
+            print(f'  [Error] {self.username} has already watched "{movie.title}".')
             return
-        if rating < 1 or rating > 5:
-            print("  [Error] Rating must be between 1 and 5.")
+        if movie in self.watchlist:
+            self.watchlist.remove(movie)
+        self.watch_history.append(movie)
+        print(f'  [OK] {self.username} watched "{movie.title}".')
+
+    def rate_movie(self, movie: Movie, score: int):
+        """Rates a movie the user has watched."""
+        if movie not in self.watch_history:
+            print(f'  [Error] {self.username} has not watched "{movie.title}" yet. Watch it first to rate.')
             return
-        movie.add_rating(rating)
-        print(f"  [OK] {self._name} rated '{movie.title}' — {rating:.1f}/5")
+        movie.add_rating(score)
+        print(f'  [OK] {self.username} rated "{movie.title}" with {score} / 5.')
 
-    def show_watchlist(self):
-        print(f"  {self._name}'s Watchlist ({len(self._watchlist)} movies):")
-        for m in self._watchlist:
-            print(f"    - {m.title} ({m.genre})")
-        if not self._watchlist:
-            print("    (empty)")
+    def show_info(self):
+        """Prints user details including watchlist and history."""
+        print(f"  Username      : {self.username}")
 
-    def show_watch_history(self):
-        print(f"  {self._name}'s Watch History ({len(self._watch_history)} movies):")
-        for m in self._watch_history:
-            print(f"    - {m.title} ({m.genre})")
-        if not self._watch_history:
-            print("    (empty)")
+        if not self.watchlist:
+            print("  Watchlist     : Empty")
+        else:
+            titles = ", ".join(m.title for m in self.watchlist)
+            print(f"  Watchlist     : {titles}")
+
+        if not self.watch_history:
+            print("  Watch History : Empty")
+        else:
+            titles = ", ".join(m.title for m in self.watch_history)
+            print(f"  Watch History : {titles}")
+        print()
 
 
-class StreamingPlatform:
-    """Manages the movie library and users."""
+def main():
+    # --- Create movie library ---
+    movie1 = Movie("The Shawshank Redemption", "Drama", 142)
+    movie2 = Movie("Inception", "Sci-Fi", 148)
+    movie3 = Movie("The Dark Knight", "Action", 152)
 
-    def __init__(self, name: str):
-        self._name = name
-        self._movies = []
+    print("=== Movie Library ===")
+    movie1.show_info()
+    movie2.show_info()
+    movie3.show_info()
 
-    def add_movie(self, movie: Movie):
-        self._movies.append(movie)
-        print(f"  [OK] Added '{movie.title}' to {self._name} library.")
+    # --- Create users ---
+    user1 = User("Tareq")
+    user2 = User("Afsana")
 
-    def browse_movies(self):
-        print(f"  {self._name} Library ({len(self._movies)} movies):")
-        for m in self._movies:
-            m.print_info()
+    # --- Add to watchlist ---
+    print("=== Adding to Watchlist ===")
+    user1.add_to_watchlist(movie1)
+    user1.add_to_watchlist(movie2)
+    user2.add_to_watchlist(movie2)
+    user2.add_to_watchlist(movie3)
+    print()
 
-    def recommend_movies(self, user: User):
-        genres = {m.genre for m in user.watch_history}
-        watched_ids = {m.movie_id for m in user.watch_history}
+    print("=== User Info After Adding Watchlist ===")
+    user1.show_info()
+    user2.show_info()
 
-        print(f"  Recommendations for {user.name}:")
-        found = False
-        for m in self._movies:
-            if m.genre in genres and m.movie_id not in watched_ids:
-                print(f"    - {m.title} ({m.genre}) — "
-                      f"Avg Rating: {m.get_average_rating():.1f}")
-                found = True
-        if not found:
-            print("    (no recommendations available)")
+    # --- Watch movies ---
+    print("=== Watching Movies ===")
+    user1.watch_movie(movie1)
+    user1.watch_movie(movie2)
+    user2.watch_movie(movie2)
+    print()
+
+    print("=== User Info After Watching ===")
+    user1.show_info()
+    user2.show_info()
+
+    # --- Rate movies ---
+    print("=== Rating Movies ===")
+    user1.rate_movie(movie1, 5)
+    user1.rate_movie(movie2, 4)
+    user2.rate_movie(movie2, 5)
+    # Try rating unwatched movie
+    user2.rate_movie(movie1, 3)
+    print()
+
+    # --- Final state ---
+    print("=== Final Movie Ratings ===")
+    movie1.show_info()
+    movie2.show_info()
+    movie3.show_info()
 
 
 if __name__ == "__main__":
-    print("=== Practice 08: Movie Streaming Platform ===")
-    print()
-
-    # Create platform
-    platform = StreamingPlatform("CineStream")
-
-    # Add movies
-    print("--- Add Movies ---")
-    m1 = Movie("M-001", "The Matrix", "Sci-Fi")
-    m2 = Movie("M-002", "Interstellar", "Sci-Fi")
-    m3 = Movie("M-003", "The Dark Knight", "Action")
-    m4 = Movie("M-004", "Inception", "Sci-Fi")
-    m5 = Movie("M-005", "John Wick", "Action")
-
-    platform.add_movie(m1)
-    platform.add_movie(m2)
-    platform.add_movie(m3)
-    platform.add_movie(m4)
-    platform.add_movie(m5)
-    print()
-
-    # Browse library
-    print("--- Browse Movies ---")
-    platform.browse_movies()
-    print()
-
-    # Create user
-    user = User("Imtiaz")
-
-    # Add to watchlist
-    print("--- Add to Watchlist ---")
-    user.add_to_watchlist(m1)
-    user.add_to_watchlist(m2)
-    user.add_to_watchlist(m3)
-    print()
-
-    print("--- Watchlist ---")
-    user.show_watchlist()
-    print()
-
-    # Watch movies
-    print("--- Watch Movies ---")
-    user.watch_movie(m1)
-    user.watch_movie(m3)
-    print()
-
-    # Rate movies
-    print("--- Rate Movies ---")
-    user.rate_movie(m1, 5)
-    user.rate_movie(m3, 4.5)
-    user.rate_movie(m2, 4)  # should fail — not watched yet
-    print()
-
-    # Show history and updated watchlist
-    print("--- Watch History ---")
-    user.show_watch_history()
-    print()
-
-    print("--- Updated Watchlist ---")
-    user.show_watchlist()
-    print()
-
-    # Recommendations
-    print("--- Recommendations ---")
-    platform.recommend_movies(user)
+    main()

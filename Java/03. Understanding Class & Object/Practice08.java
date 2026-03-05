@@ -1,245 +1,191 @@
 /**
  * Practice 08: Movie Streaming Platform (OOAD)
+ * Task: Model a movie streaming platform where users can browse movies,
+ *       add to watchlist, watch movies, and rate them.
  *
- * Scenario: An online movie streaming platform offers a large library of
- * films. Users can browse the available movies, add them to their watchlist,
- * and rate the ones they've seen. The system keeps track of each user's
- * watch history and recommends similar films based on their preferences.
- *
- * Main Objects:
- *   - Movie    — knows: id, title, genre, rating
- *   - User     — knows: name; does: add to watchlist, watch, rate
- *   - Platform — knows: movie library, users; does: add movie, recommend
+ * How to compile and run:
+ *   javac Practice08.java
+ *   java Practice08
  *
  * Key Concepts:
- *   - Multiple inner classes collaborating
- *   - ArrayList for collections
- *   - Encapsulation with private fields
- *   - Constructor and method design
- *   - Business logic (recommendations based on genre)
- *
- * Course: Professional OOP — by Zohirul Alam Tiemoon
+ *   - Classes with ArrayList fields (collections)
+ *   - Methods that manipulate collections
+ *   - Average calculation with running totals
  */
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Practice08 {
 
-    /** Represents a film in the library. */
+    /** Movie represents a movie in the streaming library. */
     static class Movie {
-        private String movieID;
         private String title;
         private String genre;
+        private int duration;
         private double totalRating;
         private int ratingCount;
 
-        public Movie(String movieID, String title, String genre) {
-            this.movieID = movieID;
+        /** Creates a new Movie with no ratings. */
+        public Movie(String title, String genre, int duration) {
             this.title = title;
             this.genre = genre;
+            this.duration = duration;
             this.totalRating = 0;
             this.ratingCount = 0;
         }
 
-        public String getMovieID() { return movieID; }
-        public String getTitle() { return title; }
-        public String getGenre() { return genre; }
-
-        public double getAverageRating() {
-            return ratingCount == 0 ? 0 : totalRating / ratingCount;
-        }
-
-        public void addRating(double rating) {
-            totalRating += rating;
+        /** Adds a rating score (1-5) to the movie. */
+        public void addRating(int score) {
+            if (score < 1 || score > 5) {
+                System.out.printf("  [Error] Rating must be between 1 and 5 (given: %d).%n", score);
+                return;
+            }
+            totalRating += score;
             ratingCount++;
         }
 
-        public void printInfo() {
-            System.out.printf("  [%s] %s | Genre: %s | Avg Rating: %.1f (%d ratings)%n",
-                    movieID, title, genre, getAverageRating(), ratingCount);
+        /** Returns the average rating or 0 if no ratings. */
+        public double averageRating() {
+            if (ratingCount == 0) return 0;
+            return totalRating / ratingCount;
+        }
+
+        /** Prints movie details. */
+        public void showInfo() {
+            System.out.printf("  Title    : %s%n", title);
+            System.out.printf("  Genre    : %s%n", genre);
+            System.out.printf("  Duration : %d min%n", duration);
+            if (ratingCount > 0) {
+                System.out.printf("  Rating   : %.1f / 5.0 (%d ratings)%n", averageRating(), ratingCount);
+            } else {
+                System.out.printf("  Rating   : No ratings yet%n");
+            }
+            System.out.println();
         }
     }
 
-    /** Represents a platform user. */
+    /** User represents a streaming platform user. */
     static class User {
-        private String name;
+        private String username;
         private List<Movie> watchlist;
         private List<Movie> watchHistory;
 
-        public User(String name) {
-            this.name = name;
+        /** Creates a new User with empty watchlist and history. */
+        public User(String username) {
+            this.username = username;
             this.watchlist = new ArrayList<>();
             this.watchHistory = new ArrayList<>();
         }
 
-        public String getName() { return name; }
-        public List<Movie> getWatchHistory() { return watchHistory; }
-
+        /** Adds a movie to the user's watchlist. */
         public void addToWatchlist(Movie movie) {
+            if (watchlist.contains(movie)) {
+                System.out.printf("  [Error] \"%s\" is already in %s's watchlist.%n", movie.title, username);
+                return;
+            }
             watchlist.add(movie);
-            System.out.printf("  [OK] %s added '%s' to watchlist.%n", name, movie.getTitle());
+            System.out.printf("  [OK] \"%s\" added to %s's watchlist.%n", movie.title, username);
         }
 
+        /** Moves a movie from watchlist to watch history. */
         public void watchMovie(Movie movie) {
-            watchlist.removeIf(m -> m.getMovieID().equals(movie.getMovieID()));
+            if (watchHistory.contains(movie)) {
+                System.out.printf("  [Error] %s has already watched \"%s\".%n", username, movie.title);
+                return;
+            }
+            watchlist.remove(movie);
             watchHistory.add(movie);
-            System.out.printf("  [OK] %s watched '%s'.%n", name, movie.getTitle());
+            System.out.printf("  [OK] %s watched \"%s\".%n", username, movie.title);
         }
 
-        public void rateMovie(Movie movie, double rating) {
-            boolean watched = false;
-            for (Movie m : watchHistory) {
-                if (m.getMovieID().equals(movie.getMovieID())) {
-                    watched = true;
-                    break;
-                }
-            }
-            if (!watched) {
-                System.out.printf("  [Error] %s hasn't watched '%s' yet.%n", name, movie.getTitle());
+        /** Rates a movie the user has watched. */
+        public void rateMovie(Movie movie, int score) {
+            if (!watchHistory.contains(movie)) {
+                System.out.printf("  [Error] %s has not watched \"%s\" yet. Watch it first to rate.%n",
+                        username, movie.title);
                 return;
             }
-            if (rating < 1 || rating > 5) {
-                System.out.println("  [Error] Rating must be between 1 and 5.");
-                return;
-            }
-            movie.addRating(rating);
-            System.out.printf("  [OK] %s rated '%s' — %.1f/5%n", name, movie.getTitle(), rating);
+            movie.addRating(score);
+            System.out.printf("  [OK] %s rated \"%s\" with %d / 5.%n", username, movie.title, score);
         }
 
-        public void showWatchlist() {
-            System.out.printf("  %s's Watchlist (%d movies):%n", name, watchlist.size());
-            for (Movie m : watchlist) {
-                System.out.printf("    - %s (%s)%n", m.getTitle(), m.getGenre());
-            }
+        /** Prints user details including watchlist and history. */
+        public void showInfo() {
+            System.out.printf("  Username      : %s%n", username);
+
+            System.out.print("  Watchlist     : ");
             if (watchlist.isEmpty()) {
-                System.out.println("    (empty)");
+                System.out.println("Empty");
+            } else {
+                List<String> titles = new ArrayList<>();
+                for (Movie m : watchlist) titles.add(m.title);
+                System.out.println(String.join(", ", titles));
             }
-        }
 
-        public void showWatchHistory() {
-            System.out.printf("  %s's Watch History (%d movies):%n", name, watchHistory.size());
-            for (Movie m : watchHistory) {
-                System.out.printf("    - %s (%s)%n", m.getTitle(), m.getGenre());
-            }
+            System.out.print("  Watch History : ");
             if (watchHistory.isEmpty()) {
-                System.out.println("    (empty)");
+                System.out.println("Empty");
+            } else {
+                List<String> titles = new ArrayList<>();
+                for (Movie m : watchHistory) titles.add(m.title);
+                System.out.println(String.join(", ", titles));
             }
-        }
-    }
-
-    /** Manages the movie library and users. */
-    static class StreamingPlatform {
-        private String name;
-        private List<Movie> movies;
-
-        public StreamingPlatform(String name) {
-            this.name = name;
-            this.movies = new ArrayList<>();
-        }
-
-        public void addMovie(Movie movie) {
-            movies.add(movie);
-            System.out.printf("  [OK] Added '%s' to %s library.%n", movie.getTitle(), name);
-        }
-
-        public void browseMovies() {
-            System.out.printf("  %s Library (%d movies):%n", name, movies.size());
-            for (Movie m : movies) {
-                m.printInfo();
-            }
-        }
-
-        public void recommendMovies(User user) {
-            Set<String> genres = new HashSet<>();
-            Set<String> watchedIDs = new HashSet<>();
-            for (Movie m : user.getWatchHistory()) {
-                genres.add(m.getGenre());
-                watchedIDs.add(m.getMovieID());
-            }
-
-            System.out.printf("  Recommendations for %s:%n", user.getName());
-            boolean found = false;
-            for (Movie m : movies) {
-                if (genres.contains(m.getGenre()) && !watchedIDs.contains(m.getMovieID())) {
-                    System.out.printf("    - %s (%s) — Avg Rating: %.1f%n",
-                            m.getTitle(), m.getGenre(), m.getAverageRating());
-                    found = true;
-                }
-            }
-            if (!found) {
-                System.out.println("    (no recommendations available)");
-            }
+            System.out.println();
         }
     }
 
     public static void main(String[] args) {
-        System.out.println("=== Practice 08: Movie Streaming Platform ===");
+        // --- Create movie library ---
+        Movie movie1 = new Movie("The Shawshank Redemption", "Drama", 142);
+        Movie movie2 = new Movie("Inception", "Sci-Fi", 148);
+        Movie movie3 = new Movie("The Dark Knight", "Action", 152);
+
+        System.out.println("=== Movie Library ===");
+        movie1.showInfo();
+        movie2.showInfo();
+        movie3.showInfo();
+
+        // --- Create users ---
+        User user1 = new User("Tareq");
+        User user2 = new User("Afsana");
+
+        // --- Add to watchlist ---
+        System.out.println("=== Adding to Watchlist ===");
+        user1.addToWatchlist(movie1);
+        user1.addToWatchlist(movie2);
+        user2.addToWatchlist(movie2);
+        user2.addToWatchlist(movie3);
         System.out.println();
 
-        // Create platform
-        StreamingPlatform platform = new StreamingPlatform("CineStream");
+        System.out.println("=== User Info After Adding Watchlist ===");
+        user1.showInfo();
+        user2.showInfo();
 
-        // Add movies
-        System.out.println("--- Add Movies ---");
-        Movie m1 = new Movie("M-001", "The Matrix", "Sci-Fi");
-        Movie m2 = new Movie("M-002", "Interstellar", "Sci-Fi");
-        Movie m3 = new Movie("M-003", "The Dark Knight", "Action");
-        Movie m4 = new Movie("M-004", "Inception", "Sci-Fi");
-        Movie m5 = new Movie("M-005", "John Wick", "Action");
-
-        platform.addMovie(m1);
-        platform.addMovie(m2);
-        platform.addMovie(m3);
-        platform.addMovie(m4);
-        platform.addMovie(m5);
+        // --- Watch movies ---
+        System.out.println("=== Watching Movies ===");
+        user1.watchMovie(movie1);
+        user1.watchMovie(movie2);
+        user2.watchMovie(movie2);
         System.out.println();
 
-        // Browse library
-        System.out.println("--- Browse Movies ---");
-        platform.browseMovies();
+        System.out.println("=== User Info After Watching ===");
+        user1.showInfo();
+        user2.showInfo();
+
+        // --- Rate movies ---
+        System.out.println("=== Rating Movies ===");
+        user1.rateMovie(movie1, 5);
+        user1.rateMovie(movie2, 4);
+        user2.rateMovie(movie2, 5);
+        // Try rating unwatched movie
+        user2.rateMovie(movie1, 3);
         System.out.println();
 
-        // Create user
-        User user = new User("Imtiaz");
-
-        // Add to watchlist
-        System.out.println("--- Add to Watchlist ---");
-        user.addToWatchlist(m1);
-        user.addToWatchlist(m2);
-        user.addToWatchlist(m3);
-        System.out.println();
-
-        System.out.println("--- Watchlist ---");
-        user.showWatchlist();
-        System.out.println();
-
-        // Watch movies
-        System.out.println("--- Watch Movies ---");
-        user.watchMovie(m1);
-        user.watchMovie(m3);
-        System.out.println();
-
-        // Rate movies
-        System.out.println("--- Rate Movies ---");
-        user.rateMovie(m1, 5);
-        user.rateMovie(m3, 4.5);
-        user.rateMovie(m2, 4); // should fail — not watched yet
-        System.out.println();
-
-        // Show history and updated watchlist
-        System.out.println("--- Watch History ---");
-        user.showWatchHistory();
-        System.out.println();
-
-        System.out.println("--- Updated Watchlist ---");
-        user.showWatchlist();
-        System.out.println();
-
-        // Recommendations
-        System.out.println("--- Recommendations ---");
-        platform.recommendMovies(user);
+        // --- Final state ---
+        System.out.println("=== Final Movie Ratings ===");
+        movie1.showInfo();
+        movie2.showInfo();
+        movie3.showInfo();
     }
 }

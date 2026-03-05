@@ -1,251 +1,215 @@
 /**
  * Practice 08: Movie Streaming Platform (OOAD)
+ * Task: Model a movie streaming platform where users can browse movies,
+ *       add to watchlist, watch movies, and rate them.
  *
- * Scenario: An online movie streaming platform offers a large library of
- * films. Users can browse the available movies, add them to their watchlist,
- * and rate the ones they've seen. The system keeps track of each user's
- * watch history and recommends similar films based on their preferences.
- *
- * Main Objects:
- *   - Movie    — knows: id, title, genre, rating
- *   - User     — knows: name; does: add to watchlist, watch, rate
- *   - Platform — knows: movie library, users; does: add movie, recommend
+ * How to run:
+ *   go run practice-08.go
  *
  * Key Concepts:
- *   - Multiple structs collaborating
- *   - Slices and maps for collections
- *   - Encapsulation with unexported fields
- *   - Constructor functions
- *   - Business logic (recommendations based on genre)
- *
- * Course: Professional OOP — by Zohirul Alam Tiemoon
+ *   - Structs with slices (lists) as fields
+ *   - Methods that manipulate collections
+ *   - Average calculation with running totals
  */
 
 package main
 
 import "fmt"
 
-// Movie represents a film in the library.
+/** Movie represents a movie in the streaming library. */
 type Movie struct {
-	movieID     string
-	title       string
-	genre       string
-	totalRating float64
-	ratingCount int
+	Title       string
+	Genre       string
+	Duration    int // in minutes
+	TotalRating float64
+	RatingCount int
 }
 
-/** NewMovie creates a new movie with no ratings yet. */
-func NewMovie(movieID, title, genre string) Movie {
-	return Movie{movieID: movieID, title: title, genre: genre}
+/** NewMovie creates a new Movie with no ratings. */
+func NewMovie(title, genre string, duration int) *Movie {
+	return &Movie{
+		Title:    title,
+		Genre:    genre,
+		Duration: duration,
+	}
 }
 
-/** GetAverageRating returns the average user rating, or 0 if no ratings. */
-func (m *Movie) GetAverageRating() float64 {
-	if m.ratingCount == 0 {
+/** AddRating adds a rating score (1-5) to the movie. */
+func (m *Movie) AddRating(score int) {
+	if score < 1 || score > 5 {
+		fmt.Printf("  [Error] Rating must be between 1 and 5 (given: %d).\n", score)
+		return
+	}
+	m.TotalRating += float64(score)
+	m.RatingCount++
+}
+
+/** AverageRating returns the average rating or 0 if no ratings. */
+func (m *Movie) AverageRating() float64 {
+	if m.RatingCount == 0 {
 		return 0
 	}
-	return m.totalRating / float64(m.ratingCount)
+	return m.TotalRating / float64(m.RatingCount)
 }
 
-/** AddRating adds a rating (1-5) to the movie. */
-func (m *Movie) AddRating(rating float64) {
-	m.totalRating += rating
-	m.ratingCount++
+/** ShowInfo prints movie details. */
+func (m *Movie) ShowInfo() {
+	fmt.Printf("  Title    : %s\n", m.Title)
+	fmt.Printf("  Genre    : %s\n", m.Genre)
+	fmt.Printf("  Duration : %d min\n", m.Duration)
+	if m.RatingCount > 0 {
+		fmt.Printf("  Rating   : %.1f / 5.0 (%d ratings)\n", m.AverageRating(), m.RatingCount)
+	} else {
+		fmt.Printf("  Rating   : No ratings yet\n")
+	}
+	fmt.Println()
 }
 
-/** PrintInfo displays movie details. */
-func (m *Movie) PrintInfo() {
-	fmt.Printf("  [%s] %s | Genre: %s | Avg Rating: %.1f (%d ratings)\n",
-		m.movieID, m.title, m.genre, m.GetAverageRating(), m.ratingCount)
-}
-
-// User represents a platform user.
+/** User represents a streaming platform user. */
 type User struct {
-	name         string
-	watchlist    []*Movie
-	watchHistory []*Movie
+	Username     string
+	Watchlist    []*Movie
+	WatchHistory []*Movie
 }
 
-/** NewUser creates a new user with empty watchlist and history. */
-func NewUser(name string) User {
-	return User{name: name, watchlist: []*Movie{}, watchHistory: []*Movie{}}
+/** NewUser creates a new User with empty watchlist and history. */
+func NewUser(username string) *User {
+	return &User{Username: username}
 }
 
 /** AddToWatchlist adds a movie to the user's watchlist. */
 func (u *User) AddToWatchlist(movie *Movie) {
-	u.watchlist = append(u.watchlist, movie)
-	fmt.Printf("  [OK] %s added '%s' to watchlist.\n", u.name, movie.title)
+	// Check if already in watchlist
+	for _, m := range u.Watchlist {
+		if m == movie {
+			fmt.Printf("  [Error] \"%s\" is already in %s's watchlist.\n", movie.Title, u.Username)
+			return
+		}
+	}
+	u.Watchlist = append(u.Watchlist, movie)
+	fmt.Printf("  [OK] \"%s\" added to %s's watchlist.\n", movie.Title, u.Username)
 }
 
 /** WatchMovie moves a movie from watchlist to watch history. */
 func (u *User) WatchMovie(movie *Movie) {
+	// Check if already watched
+	for _, m := range u.WatchHistory {
+		if m == movie {
+			fmt.Printf("  [Error] %s has already watched \"%s\".\n", u.Username, movie.Title)
+			return
+		}
+	}
 	// Remove from watchlist if present
-	for i, m := range u.watchlist {
-		if m.movieID == movie.movieID {
-			u.watchlist = append(u.watchlist[:i], u.watchlist[i+1:]...)
+	for i, m := range u.Watchlist {
+		if m == movie {
+			u.Watchlist = append(u.Watchlist[:i], u.Watchlist[i+1:]...)
 			break
 		}
 	}
-	u.watchHistory = append(u.watchHistory, movie)
-	fmt.Printf("  [OK] %s watched '%s'.\n", u.name, movie.title)
+	u.WatchHistory = append(u.WatchHistory, movie)
+	fmt.Printf("  [OK] %s watched \"%s\".\n", u.Username, movie.Title)
 }
 
 /** RateMovie rates a movie the user has watched. */
-func (u *User) RateMovie(movie *Movie, rating float64) {
-	// Check if user has watched this movie
+func (u *User) RateMovie(movie *Movie, score int) {
+	// Check if user has watched it
 	watched := false
-	for _, m := range u.watchHistory {
-		if m.movieID == movie.movieID {
+	for _, m := range u.WatchHistory {
+		if m == movie {
 			watched = true
 			break
 		}
 	}
 	if !watched {
-		fmt.Printf("  [Error] %s hasn't watched '%s' yet.\n", u.name, movie.title)
+		fmt.Printf("  [Error] %s has not watched \"%s\" yet. Watch it first to rate.\n", u.Username, movie.Title)
 		return
 	}
-	if rating < 1 || rating > 5 {
-		fmt.Println("  [Error] Rating must be between 1 and 5.")
-		return
-	}
-	movie.AddRating(rating)
-	fmt.Printf("  [OK] %s rated '%s' — %.1f/5\n", u.name, movie.title, rating)
+	movie.AddRating(score)
+	fmt.Printf("  [OK] %s rated \"%s\" with %d / 5.\n", u.Username, movie.Title, score)
 }
 
-/** ShowWatchlist displays the user's watchlist. */
-func (u *User) ShowWatchlist() {
-	fmt.Printf("  %s's Watchlist (%d movies):\n", u.name, len(u.watchlist))
-	for _, m := range u.watchlist {
-		fmt.Printf("    - %s (%s)\n", m.title, m.genre)
-	}
-	if len(u.watchlist) == 0 {
-		fmt.Println("    (empty)")
-	}
-}
+/** ShowInfo prints user details including watchlist and history. */
+func (u *User) ShowInfo() {
+	fmt.Printf("  Username      : %s\n", u.Username)
 
-/** ShowWatchHistory displays movies the user has watched. */
-func (u *User) ShowWatchHistory() {
-	fmt.Printf("  %s's Watch History (%d movies):\n", u.name, len(u.watchHistory))
-	for _, m := range u.watchHistory {
-		fmt.Printf("    - %s (%s)\n", m.title, m.genre)
-	}
-	if len(u.watchHistory) == 0 {
-		fmt.Println("    (empty)")
-	}
-}
-
-// StreamingPlatform manages the movie library and users.
-type StreamingPlatform struct {
-	name    string
-	movies  []*Movie
-}
-
-/** NewStreamingPlatform creates a new platform with an empty library. */
-func NewStreamingPlatform(name string) StreamingPlatform {
-	return StreamingPlatform{name: name, movies: []*Movie{}}
-}
-
-/** AddMovie adds a movie to the library. */
-func (p *StreamingPlatform) AddMovie(movie *Movie) {
-	p.movies = append(p.movies, movie)
-	fmt.Printf("  [OK] Added '%s' to %s library.\n", movie.title, p.name)
-}
-
-/** BrowseMovies displays all movies in the library. */
-func (p *StreamingPlatform) BrowseMovies() {
-	fmt.Printf("  %s Library (%d movies):\n", p.name, len(p.movies))
-	for _, m := range p.movies {
-		m.PrintInfo()
-	}
-}
-
-/** RecommendMovies suggests movies based on the user's watch history genres. */
-func (p *StreamingPlatform) RecommendMovies(user *User) {
-	// Collect genres from watch history
-	genreSet := map[string]bool{}
-	watchedIDs := map[string]bool{}
-	for _, m := range user.watchHistory {
-		genreSet[m.genre] = true
-		watchedIDs[m.movieID] = true
-	}
-
-	fmt.Printf("  Recommendations for %s:\n", user.name)
-	found := false
-	for _, m := range p.movies {
-		if genreSet[m.genre] && !watchedIDs[m.movieID] {
-			fmt.Printf("    - %s (%s) — Avg Rating: %.1f\n", m.title, m.genre, m.GetAverageRating())
-			found = true
+	fmt.Print("  Watchlist     : ")
+	if len(u.Watchlist) == 0 {
+		fmt.Println("Empty")
+	} else {
+		for i, m := range u.Watchlist {
+			if i > 0 {
+				fmt.Print(", ")
+			}
+			fmt.Print(m.Title)
 		}
+		fmt.Println()
 	}
-	if !found {
-		fmt.Println("    (no recommendations available)")
+
+	fmt.Print("  Watch History : ")
+	if len(u.WatchHistory) == 0 {
+		fmt.Println("Empty")
+	} else {
+		for i, m := range u.WatchHistory {
+			if i > 0 {
+				fmt.Print(", ")
+			}
+			fmt.Print(m.Title)
+		}
+		fmt.Println()
 	}
+	fmt.Println()
 }
 
 func main() {
-	fmt.Println("=== Practice 08: Movie Streaming Platform ===")
+	// --- Create movie library ---
+	movie1 := NewMovie("The Shawshank Redemption", "Drama", 142)
+	movie2 := NewMovie("Inception", "Sci-Fi", 148)
+	movie3 := NewMovie("The Dark Knight", "Action", 152)
+
+	fmt.Println("=== Movie Library ===")
+	movie1.ShowInfo()
+	movie2.ShowInfo()
+	movie3.ShowInfo()
+
+	// --- Create users ---
+	user1 := NewUser("Tareq")
+	user2 := NewUser("Afsana")
+
+	// --- Add to watchlist ---
+	fmt.Println("=== Adding to Watchlist ===")
+	user1.AddToWatchlist(movie1)
+	user1.AddToWatchlist(movie2)
+	user2.AddToWatchlist(movie2)
+	user2.AddToWatchlist(movie3)
 	fmt.Println()
 
-	// Create platform
-	platform := NewStreamingPlatform("CineStream")
+	fmt.Println("=== User Info After Adding Watchlist ===")
+	user1.ShowInfo()
+	user2.ShowInfo()
 
-	// Add movies
-	fmt.Println("--- Add Movies ---")
-	m1 := NewMovie("M-001", "The Matrix", "Sci-Fi")
-	m2 := NewMovie("M-002", "Interstellar", "Sci-Fi")
-	m3 := NewMovie("M-003", "The Dark Knight", "Action")
-	m4 := NewMovie("M-004", "Inception", "Sci-Fi")
-	m5 := NewMovie("M-005", "John Wick", "Action")
-
-	platform.AddMovie(&m1)
-	platform.AddMovie(&m2)
-	platform.AddMovie(&m3)
-	platform.AddMovie(&m4)
-	platform.AddMovie(&m5)
+	// --- Watch movies ---
+	fmt.Println("=== Watching Movies ===")
+	user1.WatchMovie(movie1)
+	user1.WatchMovie(movie2)
+	user2.WatchMovie(movie2)
 	fmt.Println()
 
-	// Browse library
-	fmt.Println("--- Browse Movies ---")
-	platform.BrowseMovies()
+	fmt.Println("=== User Info After Watching ===")
+	user1.ShowInfo()
+	user2.ShowInfo()
+
+	// --- Rate movies ---
+	fmt.Println("=== Rating Movies ===")
+	user1.RateMovie(movie1, 5)
+	user1.RateMovie(movie2, 4)
+	user2.RateMovie(movie2, 5)
+	// Try rating unwatched movie
+	user2.RateMovie(movie1, 3)
 	fmt.Println()
 
-	// Create user
-	user := NewUser("Imtiaz")
-
-	// Add to watchlist
-	fmt.Println("--- Add to Watchlist ---")
-	user.AddToWatchlist(&m1)
-	user.AddToWatchlist(&m2)
-	user.AddToWatchlist(&m3)
-	fmt.Println()
-
-	fmt.Println("--- Watchlist ---")
-	user.ShowWatchlist()
-	fmt.Println()
-
-	// Watch movies
-	fmt.Println("--- Watch Movies ---")
-	user.WatchMovie(&m1)
-	user.WatchMovie(&m3)
-	fmt.Println()
-
-	// Rate movies
-	fmt.Println("--- Rate Movies ---")
-	user.RateMovie(&m1, 5)
-	user.RateMovie(&m3, 4.5)
-	user.RateMovie(&m2, 4) // should fail — not watched yet
-	fmt.Println()
-
-	// Show history and updated watchlist
-	fmt.Println("--- Watch History ---")
-	user.ShowWatchHistory()
-	fmt.Println()
-
-	fmt.Println("--- Updated Watchlist ---")
-	user.ShowWatchlist()
-	fmt.Println()
-
-	// Recommendations
-	fmt.Println("--- Recommendations ---")
-	platform.RecommendMovies(&user)
+	// --- Final state ---
+	fmt.Println("=== Final Movie Ratings ===")
+	movie1.ShowInfo()
+	movie2.ShowInfo()
+	movie3.ShowInfo()
 }

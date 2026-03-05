@@ -1,273 +1,214 @@
 /**
  * Practice 08: Movie Streaming Platform (OOAD)
+ * Task: Model a movie streaming platform where users can browse movies,
+ *       add to watchlist, watch movies, and rate them.
  *
- * Scenario: An online movie streaming platform offers a large library of
- * films. Users can browse the available movies, add them to their watchlist,
- * and rate the ones they've seen. The system keeps track of each user's
- * watch history and recommends similar films based on their preferences.
+ * How to run (using dotnet-script):
+ *   dotnet script Practice08.cs
  *
- * Main Objects:
- *   - Movie    — knows: id, title, genre, rating
- *   - User     — knows: name; does: add to watchlist, watch, rate
- *   - Platform — knows: movie library, users; does: add movie, recommend
+ * Or create a Console App and copy contents into Program.cs:
+ *   dotnet new console -n Practice08
+ *   dotnet run --project Practice08
  *
  * Key Concepts:
- *   - Multiple classes collaborating
- *   - List<T> and HashSet<T> for collections
- *   - Encapsulation with private fields and properties
- *   - Constructor design
- *   - Business logic (recommendations based on genre)
- *
- * Course: Professional OOP — by Zohirul Alam Tiemoon
+ *   - Classes with List fields (collections)
+ *   - Methods that manipulate collections
+ *   - Average calculation with running totals
  */
 
 using System;
 using System.Collections.Generic;
 
-/** Represents a film in the library. */
-class Movie
-{
-    private string movieID;
-    private string title;
-    private string genre;
-    private double totalRating;
-    private int ratingCount;
-
-    public Movie(string movieID, string title, string genre)
-    {
-        this.movieID = movieID;
-        this.title = title;
-        this.genre = genre;
-        this.totalRating = 0;
-        this.ratingCount = 0;
-    }
-
-    public string MovieID { get { return movieID; } }
-    public string Title { get { return title; } }
-    public string Genre { get { return genre; } }
-
-    public double GetAverageRating()
-    {
-        return ratingCount == 0 ? 0 : totalRating / ratingCount;
-    }
-
-    public void AddRating(double rating)
-    {
-        totalRating += rating;
-        ratingCount++;
-    }
-
-    public void PrintInfo()
-    {
-        Console.WriteLine($"  [{movieID}] {title} | Genre: {genre} | " +
-                          $"Avg Rating: {GetAverageRating():F1} ({ratingCount} ratings)");
-    }
-}
-
-/** Represents a platform user. */
-class User
-{
-    private string name;
-    private List<Movie> watchlist;
-    private List<Movie> watchHistory;
-
-    public User(string name)
-    {
-        this.name = name;
-        this.watchlist = new List<Movie>();
-        this.watchHistory = new List<Movie>();
-    }
-
-    public string Name { get { return name; } }
-    public List<Movie> WatchHistory { get { return watchHistory; } }
-
-    public void AddToWatchlist(Movie movie)
-    {
-        watchlist.Add(movie);
-        Console.WriteLine($"  [OK] {name} added '{movie.Title}' to watchlist.");
-    }
-
-    public void WatchMovie(Movie movie)
-    {
-        watchlist.RemoveAll(m => m.MovieID == movie.MovieID);
-        watchHistory.Add(movie);
-        Console.WriteLine($"  [OK] {name} watched '{movie.Title}'.");
-    }
-
-    public void RateMovie(Movie movie, double rating)
-    {
-        bool watched = false;
-        foreach (Movie m in watchHistory)
-        {
-            if (m.MovieID == movie.MovieID)
-            {
-                watched = true;
-                break;
-            }
-        }
-        if (!watched)
-        {
-            Console.WriteLine($"  [Error] {name} hasn't watched '{movie.Title}' yet.");
-            return;
-        }
-        if (rating < 1 || rating > 5)
-        {
-            Console.WriteLine("  [Error] Rating must be between 1 and 5.");
-            return;
-        }
-        movie.AddRating(rating);
-        Console.WriteLine($"  [OK] {name} rated '{movie.Title}' — {rating:F1}/5");
-    }
-
-    public void ShowWatchlist()
-    {
-        Console.WriteLine($"  {name}'s Watchlist ({watchlist.Count} movies):");
-        foreach (Movie m in watchlist)
-        {
-            Console.WriteLine($"    - {m.Title} ({m.Genre})");
-        }
-        if (watchlist.Count == 0)
-        {
-            Console.WriteLine("    (empty)");
-        }
-    }
-
-    public void ShowWatchHistory()
-    {
-        Console.WriteLine($"  {name}'s Watch History ({watchHistory.Count} movies):");
-        foreach (Movie m in watchHistory)
-        {
-            Console.WriteLine($"    - {m.Title} ({m.Genre})");
-        }
-        if (watchHistory.Count == 0)
-        {
-            Console.WriteLine("    (empty)");
-        }
-    }
-}
-
-/** Manages the movie library and users. */
-class StreamingPlatform
-{
-    private string name;
-    private List<Movie> movies;
-
-    public StreamingPlatform(string name)
-    {
-        this.name = name;
-        this.movies = new List<Movie>();
-    }
-
-    public void AddMovie(Movie movie)
-    {
-        movies.Add(movie);
-        Console.WriteLine($"  [OK] Added '{movie.Title}' to {name} library.");
-    }
-
-    public void BrowseMovies()
-    {
-        Console.WriteLine($"  {name} Library ({movies.Count} movies):");
-        foreach (Movie m in movies)
-        {
-            m.PrintInfo();
-        }
-    }
-
-    public void RecommendMovies(User user)
-    {
-        HashSet<string> genres = new HashSet<string>();
-        HashSet<string> watchedIDs = new HashSet<string>();
-        foreach (Movie m in user.WatchHistory)
-        {
-            genres.Add(m.Genre);
-            watchedIDs.Add(m.MovieID);
-        }
-
-        Console.WriteLine($"  Recommendations for {user.Name}:");
-        bool found = false;
-        foreach (Movie m in movies)
-        {
-            if (genres.Contains(m.Genre) && !watchedIDs.Contains(m.MovieID))
-            {
-                Console.WriteLine($"    - {m.Title} ({m.Genre}) — Avg Rating: {m.GetAverageRating():F1}");
-                found = true;
-            }
-        }
-        if (!found)
-        {
-            Console.WriteLine("    (no recommendations available)");
-        }
-    }
-}
-
 class Practice08
 {
+    /** Movie represents a movie in the streaming library. */
+    class Movie
+    {
+        public string Title;
+        public string Genre;
+        public int Duration;
+        private double totalRating;
+        private int ratingCount;
+
+        /** Creates a new Movie with no ratings. */
+        public Movie(string title, string genre, int duration)
+        {
+            Title = title;
+            Genre = genre;
+            Duration = duration;
+            totalRating = 0;
+            ratingCount = 0;
+        }
+
+        /** Adds a rating score (1-5) to the movie. */
+        public void AddRating(int score)
+        {
+            if (score < 1 || score > 5)
+            {
+                Console.WriteLine($"  [Error] Rating must be between 1 and 5 (given: {score}).");
+                return;
+            }
+            totalRating += score;
+            ratingCount++;
+        }
+
+        /** Returns the average rating or 0 if no ratings. */
+        public double AverageRating()
+        {
+            if (ratingCount == 0) return 0;
+            return totalRating / ratingCount;
+        }
+
+        /** Prints movie details. */
+        public void ShowInfo()
+        {
+            Console.WriteLine($"  Title    : {Title}");
+            Console.WriteLine($"  Genre    : {Genre}");
+            Console.WriteLine($"  Duration : {Duration} min");
+            if (ratingCount > 0)
+                Console.WriteLine($"  Rating   : {AverageRating():F1} / 5.0 ({ratingCount} ratings)");
+            else
+                Console.WriteLine("  Rating   : No ratings yet");
+            Console.WriteLine();
+        }
+    }
+
+    /** User represents a streaming platform user. */
+    class User
+    {
+        public string Username;
+        private List<Movie> watchlist;
+        private List<Movie> watchHistory;
+
+        /** Creates a new User with empty watchlist and history. */
+        public User(string username)
+        {
+            Username = username;
+            watchlist = new List<Movie>();
+            watchHistory = new List<Movie>();
+        }
+
+        /** Adds a movie to the user's watchlist. */
+        public void AddToWatchlist(Movie movie)
+        {
+            if (watchlist.Contains(movie))
+            {
+                Console.WriteLine($"  [Error] \"{movie.Title}\" is already in {Username}'s watchlist.");
+                return;
+            }
+            watchlist.Add(movie);
+            Console.WriteLine($"  [OK] \"{movie.Title}\" added to {Username}'s watchlist.");
+        }
+
+        /** Moves a movie from watchlist to watch history. */
+        public void WatchMovie(Movie movie)
+        {
+            if (watchHistory.Contains(movie))
+            {
+                Console.WriteLine($"  [Error] {Username} has already watched \"{movie.Title}\".");
+                return;
+            }
+            watchlist.Remove(movie);
+            watchHistory.Add(movie);
+            Console.WriteLine($"  [OK] {Username} watched \"{movie.Title}\".");
+        }
+
+        /** Rates a movie the user has watched. */
+        public void RateMovie(Movie movie, int score)
+        {
+            if (!watchHistory.Contains(movie))
+            {
+                Console.WriteLine($"  [Error] {Username} has not watched \"{movie.Title}\" yet. Watch it first to rate.");
+                return;
+            }
+            movie.AddRating(score);
+            Console.WriteLine($"  [OK] {Username} rated \"{movie.Title}\" with {score} / 5.");
+        }
+
+        /** Prints user details including watchlist and history. */
+        public void ShowInfo()
+        {
+            Console.WriteLine($"  Username      : {Username}");
+
+            Console.Write("  Watchlist     : ");
+            if (watchlist.Count == 0)
+            {
+                Console.WriteLine("Empty");
+            }
+            else
+            {
+                List<string> titles = new List<string>();
+                foreach (Movie m in watchlist) titles.Add(m.Title);
+                Console.WriteLine(string.Join(", ", titles));
+            }
+
+            Console.Write("  Watch History : ");
+            if (watchHistory.Count == 0)
+            {
+                Console.WriteLine("Empty");
+            }
+            else
+            {
+                List<string> titles = new List<string>();
+                foreach (Movie m in watchHistory) titles.Add(m.Title);
+                Console.WriteLine(string.Join(", ", titles));
+            }
+            Console.WriteLine();
+        }
+    }
+
     static void Main(string[] args)
     {
-        Console.WriteLine("=== Practice 08: Movie Streaming Platform ===");
+        // --- Create movie library ---
+        Movie movie1 = new Movie("The Shawshank Redemption", "Drama", 142);
+        Movie movie2 = new Movie("Inception", "Sci-Fi", 148);
+        Movie movie3 = new Movie("The Dark Knight", "Action", 152);
+
+        Console.WriteLine("=== Movie Library ===");
+        movie1.ShowInfo();
+        movie2.ShowInfo();
+        movie3.ShowInfo();
+
+        // --- Create users ---
+        User user1 = new User("Tareq");
+        User user2 = new User("Afsana");
+
+        // --- Add to watchlist ---
+        Console.WriteLine("=== Adding to Watchlist ===");
+        user1.AddToWatchlist(movie1);
+        user1.AddToWatchlist(movie2);
+        user2.AddToWatchlist(movie2);
+        user2.AddToWatchlist(movie3);
         Console.WriteLine();
 
-        // Create platform
-        StreamingPlatform platform = new StreamingPlatform("CineStream");
+        Console.WriteLine("=== User Info After Adding Watchlist ===");
+        user1.ShowInfo();
+        user2.ShowInfo();
 
-        // Add movies
-        Console.WriteLine("--- Add Movies ---");
-        Movie m1 = new Movie("M-001", "The Matrix", "Sci-Fi");
-        Movie m2 = new Movie("M-002", "Interstellar", "Sci-Fi");
-        Movie m3 = new Movie("M-003", "The Dark Knight", "Action");
-        Movie m4 = new Movie("M-004", "Inception", "Sci-Fi");
-        Movie m5 = new Movie("M-005", "John Wick", "Action");
-
-        platform.AddMovie(m1);
-        platform.AddMovie(m2);
-        platform.AddMovie(m3);
-        platform.AddMovie(m4);
-        platform.AddMovie(m5);
+        // --- Watch movies ---
+        Console.WriteLine("=== Watching Movies ===");
+        user1.WatchMovie(movie1);
+        user1.WatchMovie(movie2);
+        user2.WatchMovie(movie2);
         Console.WriteLine();
 
-        // Browse library
-        Console.WriteLine("--- Browse Movies ---");
-        platform.BrowseMovies();
+        Console.WriteLine("=== User Info After Watching ===");
+        user1.ShowInfo();
+        user2.ShowInfo();
+
+        // --- Rate movies ---
+        Console.WriteLine("=== Rating Movies ===");
+        user1.RateMovie(movie1, 5);
+        user1.RateMovie(movie2, 4);
+        user2.RateMovie(movie2, 5);
+        // Try rating unwatched movie
+        user2.RateMovie(movie1, 3);
         Console.WriteLine();
 
-        // Create user
-        User user = new User("Imtiaz");
-
-        // Add to watchlist
-        Console.WriteLine("--- Add to Watchlist ---");
-        user.AddToWatchlist(m1);
-        user.AddToWatchlist(m2);
-        user.AddToWatchlist(m3);
-        Console.WriteLine();
-
-        Console.WriteLine("--- Watchlist ---");
-        user.ShowWatchlist();
-        Console.WriteLine();
-
-        // Watch movies
-        Console.WriteLine("--- Watch Movies ---");
-        user.WatchMovie(m1);
-        user.WatchMovie(m3);
-        Console.WriteLine();
-
-        // Rate movies
-        Console.WriteLine("--- Rate Movies ---");
-        user.RateMovie(m1, 5);
-        user.RateMovie(m3, 4.5);
-        user.RateMovie(m2, 4); // should fail — not watched yet
-        Console.WriteLine();
-
-        // Show history and updated watchlist
-        Console.WriteLine("--- Watch History ---");
-        user.ShowWatchHistory();
-        Console.WriteLine();
-
-        Console.WriteLine("--- Updated Watchlist ---");
-        user.ShowWatchlist();
-        Console.WriteLine();
-
-        // Recommendations
-        Console.WriteLine("--- Recommendations ---");
-        platform.RecommendMovies(user);
+        // --- Final state ---
+        Console.WriteLine("=== Final Movie Ratings ===");
+        movie1.ShowInfo();
+        movie2.ShowInfo();
+        movie3.ShowInfo();
     }
 }
