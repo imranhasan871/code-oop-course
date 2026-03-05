@@ -1,150 +1,128 @@
 """
 Practice 09: Bank Account Collection
+Task: Manage a list of BankAccount objects. Perform transactions,
+      calculate total balance, and find accounts with highest/lowest balance.
 
-This is an extended practice of Practice 04. In this exercise, you will
-create a list of Bank Accounts, perform various transactions (such as
-withdrawals and deposits) across multiple accounts, and calculate the
-total balance of all the accounts owned by the Bank.
+How to run:
+  python practice_09.py
 
 Key Concepts:
-  - Reusing the BankAccount class from Practice 04
-  - List of objects (object collection)
-  - Iterating over a collection to aggregate data
-  - Business operations across multiple objects
-
-Course: Professional OOP — by Zohirul Alam Tiemoon
+  - List of objects (collection of objects)
+  - Iterating over a collection to compute aggregates
+  - Finding min/max in a collection of objects
 """
 
 
 class BankAccount:
-    """Represents a bank account with basic operations."""
+    """BankAccount represents a bank account with basic operations."""
 
     def __init__(self, account_number: str, account_name: str, balance: float):
-        self._account_number = account_number
-        self._account_name = account_name
-        self._balance = balance
-
-    @property
-    def account_number(self) -> str:
-        return self._account_number
-
-    @property
-    def account_name(self) -> str:
-        return self._account_name
-
-    @property
-    def balance(self) -> float:
-        return self._balance
+        """Creates a new BankAccount with the given details."""
+        self.account_number = account_number
+        self.account_name = account_name
+        self.balance = balance
 
     def deposit(self, amount: float):
+        """Deposits the given amount into the account."""
         if amount <= 0:
-            print("  [Error] Deposit amount must be positive.")
+            print("  [Error] Deposit amount must be greater than 0.")
             return
-        self._balance += amount
-        print(f"  [OK] Deposited {amount:.2f} to {self._account_name}. "
-              f"New balance: {self._balance:.2f}")
+        self.balance += amount
+        print(f"  [OK] Deposited {amount:.2f} to {self.account_name}")
 
     def withdraw(self, amount: float):
+        """Withdraws the given amount from the account."""
         if amount <= 0:
-            print("  [Error] Withdrawal amount must be positive.")
+            print("  [Error] Withdrawal amount must be greater than 0.")
             return
-        if amount > self._balance:
-            print(f"  [Error] Insufficient balance in {self._account_name}. "
-                  f"Available: {self._balance:.2f}")
+        if self.balance < amount:
+            print(f"  [Error] Insufficient balance in {self.account_name} "
+                  f"(Balance: {self.balance:.2f}, Requested: {amount:.2f})")
             return
-        self._balance -= amount
-        print(f"  [OK] Withdrew {amount:.2f} from {self._account_name}. "
-              f"New balance: {self._balance:.2f}")
+        self.balance -= amount
+        print(f"  [OK] Withdrew {amount:.2f} from {self.account_name}")
 
-    def transfer(self, to: "BankAccount", amount: float):
-        if amount <= 0:
-            print("  [Error] Transfer amount must be positive.")
-            return
-        if amount > self._balance:
-            print(f"  [Error] Insufficient balance in {self._account_name}. "
-                  f"Available: {self._balance:.2f}")
-            return
-        self._balance -= amount
-        to._balance += amount
-        print(f"  [OK] Transferred {amount:.2f} from {self._account_name} "
-              f"to {to._account_name}")
-
-    def print_info(self):
-        print(f"  {self._account_number:<10} | {self._account_name:<10} | "
-              f"Balance: {self._balance:>10.2f}")
+    def show_info(self):
+        """Prints the account details in a table row format."""
+        print(f"  {self.account_number:<10} | {self.account_name:<12} | Balance: {self.balance:>10.2f}")
 
 
-class Bank:
-    """Manages a collection of bank accounts."""
+def calculate_total_balance(accounts: list) -> float:
+    """Returns the sum of all account balances."""
+    total = 0.0
+    for acc in accounts:
+        total += acc.balance
+    return total
 
-    def __init__(self, bank_name: str):
-        self._bank_name = bank_name
-        self._accounts = []
 
-    def add_account(self, account: BankAccount):
-        self._accounts.append(account)
-        print(f"  [OK] Added account {account.account_number} "
-              f"({account.account_name}) to {self._bank_name}.")
+def find_highest_balance(accounts: list):
+    """Returns the account with the highest balance."""
+    highest = accounts[0]
+    for acc in accounts[1:]:
+        if acc.balance > highest.balance:
+            highest = acc
+    return highest
 
-    def show_all_accounts(self):
-        print(f"  {self._bank_name} — All Accounts ({len(self._accounts)}):")
-        for acc in self._accounts:
-            acc.print_info()
 
-    def get_total_balance(self) -> float:
-        total = 0.0
-        for acc in self._accounts:
-            total += acc.balance
-        return total
+def find_lowest_balance(accounts: list):
+    """Returns the account with the lowest balance."""
+    lowest = accounts[0]
+    for acc in accounts[1:]:
+        if acc.balance < lowest.balance:
+            lowest = acc
+    return lowest
 
-    def print_total_balance(self):
-        print(f"  Total balance of {self._bank_name}: {self.get_total_balance():.2f}")
+
+def show_all_accounts(accounts: list):
+    """Prints all accounts in a formatted table."""
+    print(f"  {'Account No':<10} | {'Name':<12} | {'Balance'}")
+    print("  " + "-" * 43)
+    for acc in accounts:
+        acc.show_info()
+    print()
+
+
+def main():
+    # --- Create a list of bank accounts ---
+    accounts = [
+        BankAccount("ACC-1001", "Tareq", 15000),
+        BankAccount("ACC-1002", "Afsana", 22000),
+        BankAccount("ACC-1003", "Imtiaz", 8500),
+        BankAccount("ACC-1004", "Pulok", 31000),
+        BankAccount("ACC-1005", "Samia", 12000),
+    ]
+
+    print("=== All Accounts (Initial) ===")
+    show_all_accounts(accounts)
+
+    # --- Perform transactions ---
+    print("=== Performing Transactions ===")
+    accounts[0].deposit(5000)   # Tareq deposits 5000
+    accounts[1].withdraw(3000)  # Afsana withdraws 3000
+    accounts[2].deposit(1500)   # Imtiaz deposits 1500
+    accounts[3].withdraw(10000) # Pulok withdraws 10000
+    accounts[4].deposit(8000)   # Samia deposits 8000
+    print()
+
+    print("=== All Accounts (After Transactions) ===")
+    show_all_accounts(accounts)
+
+    # --- Calculate total balance ---
+    total = calculate_total_balance(accounts)
+    print(f"  Total Balance of All Accounts: {total:.2f}")
+    print()
+
+    # --- Find highest and lowest balance ---
+    highest = find_highest_balance(accounts)
+    lowest = find_lowest_balance(accounts)
+
+    print("=== Highest Balance ===")
+    highest.show_info()
+    print()
+
+    print("=== Lowest Balance ===")
+    lowest.show_info()
 
 
 if __name__ == "__main__":
-    print("=== Practice 09: Bank Account Collection ===")
-    print()
-
-    # Create bank
-    bank = Bank("City Bank")
-
-    # Create accounts
-    acc1 = BankAccount("ACC-1001", "Imtiaz", 50000)
-    acc2 = BankAccount("ACC-1002", "Faria", 30000)
-    acc3 = BankAccount("ACC-1003", "Rafi", 45000)
-    acc4 = BankAccount("ACC-1004", "Salma", 60000)
-
-    # Add accounts to bank
-    print("--- Add Accounts ---")
-    bank.add_account(acc1)
-    bank.add_account(acc2)
-    bank.add_account(acc3)
-    bank.add_account(acc4)
-    print()
-
-    # Show all accounts
-    print("--- All Accounts ---")
-    bank.show_all_accounts()
-    print()
-
-    # Total balance before transactions
-    print("--- Total Balance (Before) ---")
-    bank.print_total_balance()
-    print()
-
-    # Perform transactions
-    print("--- Transactions ---")
-    acc1.deposit(10000)
-    acc2.withdraw(5000)
-    acc3.transfer(acc4, 15000)
-    acc1.transfer(acc2, 20000)
-    print()
-
-    # Show all accounts after transactions
-    print("--- All Accounts (After Transactions) ---")
-    bank.show_all_accounts()
-    print()
-
-    # Total balance after transactions (should be same — money moves within bank)
-    print("--- Total Balance (After) ---")
-    bank.print_total_balance()
+    main()

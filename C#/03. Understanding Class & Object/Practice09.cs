@@ -1,119 +1,79 @@
 /**
  * Practice 09: Bank Account Collection
+ * Task: Manage a list of BankAccount objects. Perform transactions,
+ *       calculate total balance, and find accounts with highest/lowest balance.
  *
- * This is an extended practice of Practice 04. In this exercise, you will
- * create a list of Bank Accounts, perform various transactions (such as
- * withdrawals and deposits) across multiple accounts, and calculate the
- * total balance of all the accounts owned by the Bank.
+ * How to run (using dotnet-script):
+ *   dotnet script Practice09.cs
+ *
+ * Or create a Console App and copy contents into Program.cs:
+ *   dotnet new console -n Practice09
+ *   dotnet run --project Practice09
  *
  * Key Concepts:
- *   - Reusing the BankAccount class from Practice 04
- *   - List<T> of objects (object collection)
- *   - Iterating over a collection to aggregate data
- *   - Business operations across multiple objects
- *
- * Course: Professional OOP — by Zohirul Alam Tiemoon
+ *   - List of objects (collection of objects)
+ *   - Iterating over a collection to compute aggregates
+ *   - Finding min/max in a collection of objects
  */
 
 using System;
 using System.Collections.Generic;
 
-/** Represents a bank account with basic operations. */
-class BankAccount
+class Practice09
 {
-    private string accountNumber;
-    private string accountName;
-    private double balance;
-
-    public BankAccount(string accountNumber, string accountName, double balance)
+    /** BankAccount represents a bank account with basic operations. */
+    class BankAccount
     {
-        this.accountNumber = accountNumber;
-        this.accountName = accountName;
-        this.balance = balance;
-    }
+        public string AccountNumber;
+        public string AccountName;
+        public double Balance;
 
-    public string AccountNumber { get { return accountNumber; } }
-    public string AccountName { get { return accountName; } }
-    public double Balance { get { return balance; } }
-
-    public void Deposit(double amount)
-    {
-        if (amount <= 0)
+        /** Creates a new BankAccount with the given details. */
+        public BankAccount(string accountNumber, string accountName, double balance)
         {
-            Console.WriteLine("  [Error] Deposit amount must be positive.");
-            return;
+            AccountNumber = accountNumber;
+            AccountName = accountName;
+            Balance = balance;
         }
-        balance += amount;
-        Console.WriteLine($"  [OK] Deposited {amount:F2} to {accountName}. New balance: {balance:F2}");
-    }
 
-    public void Withdraw(double amount)
-    {
-        if (amount <= 0)
+        /** Deposits the given amount into the account. */
+        public void Deposit(double amount)
         {
-            Console.WriteLine("  [Error] Withdrawal amount must be positive.");
-            return;
+            if (amount <= 0)
+            {
+                Console.WriteLine("  [Error] Deposit amount must be greater than 0.");
+                return;
+            }
+            Balance += amount;
+            Console.WriteLine($"  [OK] Deposited {amount:F2} to {AccountName}");
         }
-        if (amount > balance)
+
+        /** Withdraws the given amount from the account. */
+        public void Withdraw(double amount)
         {
-            Console.WriteLine($"  [Error] Insufficient balance in {accountName}. Available: {balance:F2}");
-            return;
+            if (amount <= 0)
+            {
+                Console.WriteLine("  [Error] Withdrawal amount must be greater than 0.");
+                return;
+            }
+            if (Balance < amount)
+            {
+                Console.WriteLine($"  [Error] Insufficient balance in {AccountName} (Balance: {Balance:F2}, Requested: {amount:F2})");
+                return;
+            }
+            Balance -= amount;
+            Console.WriteLine($"  [OK] Withdrew {amount:F2} from {AccountName}");
         }
-        balance -= amount;
-        Console.WriteLine($"  [OK] Withdrew {amount:F2} from {accountName}. New balance: {balance:F2}");
-    }
 
-    public void Transfer(BankAccount to, double amount)
-    {
-        if (amount <= 0)
+        /** Prints the account details in a table row format. */
+        public void ShowInfo()
         {
-            Console.WriteLine("  [Error] Transfer amount must be positive.");
-            return;
-        }
-        if (amount > balance)
-        {
-            Console.WriteLine($"  [Error] Insufficient balance in {accountName}. Available: {balance:F2}");
-            return;
-        }
-        balance -= amount;
-        to.balance += amount;
-        Console.WriteLine($"  [OK] Transferred {amount:F2} from {accountName} to {to.accountName}");
-    }
-
-    public void PrintInfo()
-    {
-        Console.WriteLine($"  {accountNumber,-10} | {accountName,-10} | Balance: {balance,10:F2}");
-    }
-}
-
-/** Manages a collection of bank accounts. */
-class Bank
-{
-    private string bankName;
-    private List<BankAccount> accounts;
-
-    public Bank(string bankName)
-    {
-        this.bankName = bankName;
-        this.accounts = new List<BankAccount>();
-    }
-
-    public void AddAccount(BankAccount account)
-    {
-        accounts.Add(account);
-        Console.WriteLine($"  [OK] Added account {account.AccountNumber} ({account.AccountName}) to {bankName}.");
-    }
-
-    public void ShowAllAccounts()
-    {
-        Console.WriteLine($"  {bankName} — All Accounts ({accounts.Count}):");
-        foreach (BankAccount acc in accounts)
-        {
-            acc.PrintInfo();
+            Console.WriteLine($"  {AccountNumber,-10} | {AccountName,-12} | Balance: {Balance,10:F2}");
         }
     }
 
-    public double GetTotalBalance()
+    /** Calculates the total balance of all accounts. */
+    static double CalculateTotalBalance(List<BankAccount> accounts)
     {
         double total = 0;
         foreach (BankAccount acc in accounts)
@@ -123,61 +83,83 @@ class Bank
         return total;
     }
 
-    public void PrintTotalBalance()
+    /** Finds the account with the highest balance. */
+    static BankAccount FindHighestBalance(List<BankAccount> accounts)
     {
-        Console.WriteLine($"  Total balance of {bankName}: {GetTotalBalance():F2}");
+        BankAccount highest = accounts[0];
+        for (int i = 1; i < accounts.Count; i++)
+        {
+            if (accounts[i].Balance > highest.Balance)
+                highest = accounts[i];
+        }
+        return highest;
     }
-}
 
-class Practice09
-{
+    /** Finds the account with the lowest balance. */
+    static BankAccount FindLowestBalance(List<BankAccount> accounts)
+    {
+        BankAccount lowest = accounts[0];
+        for (int i = 1; i < accounts.Count; i++)
+        {
+            if (accounts[i].Balance < lowest.Balance)
+                lowest = accounts[i];
+        }
+        return lowest;
+    }
+
+    /** Prints all accounts in a formatted table. */
+    static void ShowAllAccounts(List<BankAccount> accounts)
+    {
+        Console.WriteLine($"  {"Account No",-10} | {"Name",-12} | {"Balance"}");
+        Console.WriteLine("  -------------------------------------------");
+        foreach (BankAccount acc in accounts)
+        {
+            acc.ShowInfo();
+        }
+        Console.WriteLine();
+    }
+
     static void Main(string[] args)
     {
-        Console.WriteLine("=== Practice 09: Bank Account Collection ===");
+        // --- Create a list of bank accounts ---
+        List<BankAccount> accounts = new List<BankAccount>
+        {
+            new BankAccount("ACC-1001", "Tareq", 15000),
+            new BankAccount("ACC-1002", "Afsana", 22000),
+            new BankAccount("ACC-1003", "Imtiaz", 8500),
+            new BankAccount("ACC-1004", "Pulok", 31000),
+            new BankAccount("ACC-1005", "Samia", 12000)
+        };
+
+        Console.WriteLine("=== All Accounts (Initial) ===");
+        ShowAllAccounts(accounts);
+
+        // --- Perform transactions ---
+        Console.WriteLine("=== Performing Transactions ===");
+        accounts[0].Deposit(5000);   // Tareq deposits 5000
+        accounts[1].Withdraw(3000);  // Afsana withdraws 3000
+        accounts[2].Deposit(1500);   // Imtiaz deposits 1500
+        accounts[3].Withdraw(10000); // Pulok withdraws 10000
+        accounts[4].Deposit(8000);   // Samia deposits 8000
         Console.WriteLine();
 
-        // Create bank
-        Bank bank = new Bank("City Bank");
+        Console.WriteLine("=== All Accounts (After Transactions) ===");
+        ShowAllAccounts(accounts);
 
-        // Create accounts
-        BankAccount acc1 = new BankAccount("ACC-1001", "Imtiaz", 50000);
-        BankAccount acc2 = new BankAccount("ACC-1002", "Faria", 30000);
-        BankAccount acc3 = new BankAccount("ACC-1003", "Rafi", 45000);
-        BankAccount acc4 = new BankAccount("ACC-1004", "Salma", 60000);
-
-        // Add accounts to bank
-        Console.WriteLine("--- Add Accounts ---");
-        bank.AddAccount(acc1);
-        bank.AddAccount(acc2);
-        bank.AddAccount(acc3);
-        bank.AddAccount(acc4);
+        // --- Calculate total balance ---
+        double total = CalculateTotalBalance(accounts);
+        Console.WriteLine($"  Total Balance of All Accounts: {total:F2}");
         Console.WriteLine();
 
-        // Show all accounts
-        Console.WriteLine("--- All Accounts ---");
-        bank.ShowAllAccounts();
+        // --- Find highest and lowest balance ---
+        BankAccount highest = FindHighestBalance(accounts);
+        BankAccount lowest = FindLowestBalance(accounts);
+
+        Console.WriteLine("=== Highest Balance ===");
+        highest.ShowInfo();
         Console.WriteLine();
 
-        // Total balance before transactions
-        Console.WriteLine("--- Total Balance (Before) ---");
-        bank.PrintTotalBalance();
-        Console.WriteLine();
-
-        // Perform transactions
-        Console.WriteLine("--- Transactions ---");
-        acc1.Deposit(10000);
-        acc2.Withdraw(5000);
-        acc3.Transfer(acc4, 15000);
-        acc1.Transfer(acc2, 20000);
-        Console.WriteLine();
-
-        // Show all accounts after transactions
-        Console.WriteLine("--- All Accounts (After Transactions) ---");
-        bank.ShowAllAccounts();
-        Console.WriteLine();
-
-        // Total balance after transactions (should be same — money moves within bank)
-        Console.WriteLine("--- Total Balance (After) ---");
-        bank.PrintTotalBalance();
+        Console.WriteLine("=== Lowest Balance ===");
+        lowest.ShowInfo();
     }
 }

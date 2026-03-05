@@ -1,175 +1,145 @@
 /**
  * Practice 09: Bank Account Collection
+ * Task: Manage a list of BankAccount objects. Perform transactions,
+ *       calculate total balance, and find accounts with highest/lowest balance.
  *
- * This is an extended practice of Practice 04. In this exercise, you will
- * create a list of Bank Accounts, perform various transactions (such as
- * withdrawals and deposits) across multiple accounts, and calculate the
- * total balance of all the accounts owned by the Bank.
+ * How to run:
+ *   go run practice-09.go
  *
  * Key Concepts:
- *   - Reusing the BankAccount struct from Practice 04
- *   - Slice of structs (object collection)
- *   - Iterating over a collection to aggregate data
- *   - Business operations across multiple objects
- *
- * Course: Professional OOP — by Zohirul Alam Tiemoon
+ *   - Slice of structs (collection of objects)
+ *   - Iterating over a collection to compute aggregates
+ *   - Finding min/max in a collection of objects
  */
 
 package main
 
 import "fmt"
 
-// BankAccount represents a bank account with basic operations.
+/** BankAccount represents a bank account with basic operations. */
 type BankAccount struct {
-	accountNumber string
-	accountName   string
-	balance       float64
+	AccountNumber string
+	AccountName   string
+	Balance       float64
 }
 
-/** NewBankAccount creates and returns a new BankAccount. */
+/** NewBankAccount creates a new BankAccount with the given details. */
 func NewBankAccount(accountNumber, accountName string, balance float64) BankAccount {
 	return BankAccount{
-		accountNumber: accountNumber,
-		accountName:   accountName,
-		balance:       balance,
+		AccountNumber: accountNumber,
+		AccountName:   accountName,
+		Balance:       balance,
 	}
 }
 
-/** Deposit adds the given amount to the balance. */
+/** Deposit adds the given amount to the account balance. */
 func (a *BankAccount) Deposit(amount float64) {
 	if amount <= 0 {
-		fmt.Println("  [Error] Deposit amount must be positive.")
+		fmt.Println("  [Error] Deposit amount must be greater than 0.")
 		return
 	}
-	a.balance += amount
-	fmt.Printf("  [OK] Deposited %.2f to %s. New balance: %.2f\n",
-		amount, a.accountName, a.balance)
+	a.Balance += amount
+	fmt.Printf("  [OK] Deposited %.2f to %s\n", amount, a.AccountName)
 }
 
-/** Withdraw subtracts the given amount from the balance. */
+/** Withdraw subtracts the given amount from the account balance. */
 func (a *BankAccount) Withdraw(amount float64) {
 	if amount <= 0 {
-		fmt.Println("  [Error] Withdrawal amount must be positive.")
+		fmt.Println("  [Error] Withdrawal amount must be greater than 0.")
 		return
 	}
-	if amount > a.balance {
-		fmt.Printf("  [Error] Insufficient balance in %s. Available: %.2f\n",
-			a.accountName, a.balance)
+	if a.Balance < amount {
+		fmt.Printf("  [Error] Insufficient balance in %s (Balance: %.2f, Requested: %.2f)\n",
+			a.AccountName, a.Balance, amount)
 		return
 	}
-	a.balance -= amount
-	fmt.Printf("  [OK] Withdrew %.2f from %s. New balance: %.2f\n",
-		amount, a.accountName, a.balance)
+	a.Balance -= amount
+	fmt.Printf("  [OK] Withdrew %.2f from %s\n", amount, a.AccountName)
 }
 
-/** Transfer moves the given amount from this account to another. */
-func (a *BankAccount) Transfer(to *BankAccount, amount float64) {
-	if amount <= 0 {
-		fmt.Println("  [Error] Transfer amount must be positive.")
-		return
-	}
-	if amount > a.balance {
-		fmt.Printf("  [Error] Insufficient balance in %s. Available: %.2f\n",
-			a.accountName, a.balance)
-		return
-	}
-	a.balance -= amount
-	to.balance += amount
-	fmt.Printf("  [OK] Transferred %.2f from %s to %s\n",
-		amount, a.accountName, to.accountName)
+/** ShowInfo prints the account details. */
+func (a *BankAccount) ShowInfo() {
+	fmt.Printf("  %-10s | %-12s | Balance: %10.2f\n", a.AccountNumber, a.AccountName, a.Balance)
 }
 
-/** PrintInfo displays account details. */
-func (a *BankAccount) PrintInfo() {
-	fmt.Printf("  %-10s | %-10s | Balance: %10.2f\n",
-		a.accountNumber, a.accountName, a.balance)
-}
-
-// Bank manages a collection of accounts.
-type Bank struct {
-	bankName string
-	accounts []*BankAccount
-}
-
-/** NewBank creates a bank with an empty account list. */
-func NewBank(bankName string) Bank {
-	return Bank{bankName: bankName, accounts: []*BankAccount{}}
-}
-
-/** AddAccount adds an account to the bank. */
-func (b *Bank) AddAccount(account *BankAccount) {
-	b.accounts = append(b.accounts, account)
-	fmt.Printf("  [OK] Added account %s (%s) to %s.\n",
-		account.accountNumber, account.accountName, b.bankName)
-}
-
-/** ShowAllAccounts lists all accounts in the bank. */
-func (b *Bank) ShowAllAccounts() {
-	fmt.Printf("  %s — All Accounts (%d):\n", b.bankName, len(b.accounts))
-	for _, acc := range b.accounts {
-		acc.PrintInfo()
-	}
-}
-
-/** GetTotalBalance calculates and returns the sum of all account balances. */
-func (b *Bank) GetTotalBalance() float64 {
+/** calculateTotalBalance returns the sum of all account balances. */
+func calculateTotalBalance(accounts []BankAccount) float64 {
 	total := 0.0
-	for _, acc := range b.accounts {
-		total += acc.balance
+	for _, acc := range accounts {
+		total += acc.Balance
 	}
 	return total
 }
 
-/** PrintTotalBalance displays the total balance across all accounts. */
-func (b *Bank) PrintTotalBalance() {
-	fmt.Printf("  Total balance of %s: %.2f\n", b.bankName, b.GetTotalBalance())
+/** findHighestBalance returns the account with the highest balance. */
+func findHighestBalance(accounts []BankAccount) BankAccount {
+	highest := accounts[0]
+	for _, acc := range accounts[1:] {
+		if acc.Balance > highest.Balance {
+			highest = acc
+		}
+	}
+	return highest
+}
+
+/** findLowestBalance returns the account with the lowest balance. */
+func findLowestBalance(accounts []BankAccount) BankAccount {
+	lowest := accounts[0]
+	for _, acc := range accounts[1:] {
+		if acc.Balance < lowest.Balance {
+			lowest = acc
+		}
+	}
+	return lowest
+}
+
+/** showAllAccounts prints all accounts in the list. */
+func showAllAccounts(accounts []BankAccount) {
+	fmt.Printf("  %-10s | %-12s | %s\n", "Account No", "Name", "Balance")
+	fmt.Println("  " + "-------------------------------------------")
+	for i := range accounts {
+		accounts[i].ShowInfo()
+	}
+	fmt.Println()
 }
 
 func main() {
-	fmt.Println("=== Practice 09: Bank Account Collection ===")
+	// --- Create a list of bank accounts ---
+	accounts := []BankAccount{
+		NewBankAccount("ACC-1001", "Tareq", 15000),
+		NewBankAccount("ACC-1002", "Afsana", 22000),
+		NewBankAccount("ACC-1003", "Imtiaz", 8500),
+		NewBankAccount("ACC-1004", "Pulok", 31000),
+		NewBankAccount("ACC-1005", "Samia", 12000),
+	}
+
+	fmt.Println("=== All Accounts (Initial) ===")
+	showAllAccounts(accounts)
+
+	// --- Perform transactions ---
+	fmt.Println("=== Performing Transactions ===")
+	accounts[0].Deposit(5000)   // Tareq deposits 5000
+	accounts[1].Withdraw(3000)  // Afsana withdraws 3000
+	accounts[2].Deposit(1500)   // Imtiaz deposits 1500
+	accounts[3].Withdraw(10000) // Pulok withdraws 10000
+	accounts[4].Deposit(8000)   // Samia deposits 8000
 	fmt.Println()
 
-	// Create bank
-	bank := NewBank("City Bank")
+	fmt.Println("=== All Accounts (After Transactions) ===")
+	showAllAccounts(accounts)
 
-	// Create accounts
-	acc1 := NewBankAccount("ACC-1001", "Imtiaz", 50000)
-	acc2 := NewBankAccount("ACC-1002", "Faria", 30000)
-	acc3 := NewBankAccount("ACC-1003", "Rafi", 45000)
-	acc4 := NewBankAccount("ACC-1004", "Salma", 60000)
+	// --- Calculate total balance ---
+	total := calculateTotalBalance(accounts)
+	fmt.Printf("  Total Balance of All Accounts: %.2f\n\n", total)
 
-	// Add accounts to bank
-	fmt.Println("--- Add Accounts ---")
-	bank.AddAccount(&acc1)
-	bank.AddAccount(&acc2)
-	bank.AddAccount(&acc3)
-	bank.AddAccount(&acc4)
+	// --- Find highest and lowest balance ---
+	highest := findHighestBalance(accounts)
+	lowest := findLowestBalance(accounts)
+
+	fmt.Println("=== Highest Balance ===")
+	highest.ShowInfo()
 	fmt.Println()
 
-	// Show all accounts
-	fmt.Println("--- All Accounts ---")
-	bank.ShowAllAccounts()
-	fmt.Println()
-
-	// Total balance before transactions
-	fmt.Println("--- Total Balance (Before) ---")
-	bank.PrintTotalBalance()
-	fmt.Println()
-
-	// Perform transactions
-	fmt.Println("--- Transactions ---")
-	acc1.Deposit(10000)
-	acc2.Withdraw(5000)
-	acc3.Transfer(&acc4, 15000)
-	acc1.Transfer(&acc2, 20000)
-	fmt.Println()
-
-	// Show all accounts after transactions
-	fmt.Println("--- All Accounts (After Transactions) ---")
-	bank.ShowAllAccounts()
-	fmt.Println()
-
-	// Total balance after transactions (should be same — money moves within bank)
-	fmt.Println("--- Total Balance (After) ---")
-	bank.PrintTotalBalance()
+	fmt.Println("=== Lowest Balance ===")
+	lowest.ShowInfo()
 }

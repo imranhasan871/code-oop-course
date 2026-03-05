@@ -1,18 +1,16 @@
 /**
  * Practice 09: Bank Account Collection
+ * Task: Manage a list of BankAccount objects. Perform transactions,
+ *       calculate total balance, and find accounts with highest/lowest balance.
  *
- * This is an extended practice of Practice 04. In this exercise, you will
- * create a list of Bank Accounts, perform various transactions (such as
- * withdrawals and deposits) across multiple accounts, and calculate the
- * total balance of all the accounts owned by the Bank.
+ * How to compile and run:
+ *   javac Practice09.java
+ *   java Practice09
  *
  * Key Concepts:
- *   - Reusing the BankAccount class from Practice 04
- *   - ArrayList of objects (object collection)
- *   - Iterating over a collection to aggregate data
- *   - Business operations across multiple objects
- *
- * Course: Professional OOP — by Zohirul Alam Tiemoon
+ *   - ArrayList of objects (collection of objects)
+ *   - Iterating over a collection to compute aggregates
+ *   - Finding min/max in a collection of objects
  */
 
 import java.util.ArrayList;
@@ -20,151 +18,128 @@ import java.util.List;
 
 public class Practice09 {
 
-    /** Represents a bank account with basic operations. */
+    /** BankAccount represents a bank account with basic operations. */
     static class BankAccount {
         private String accountNumber;
         private String accountName;
         private double balance;
 
+        /** Creates a new BankAccount with the given details. */
         public BankAccount(String accountNumber, String accountName, double balance) {
             this.accountNumber = accountNumber;
             this.accountName = accountName;
             this.balance = balance;
         }
 
-        public String getAccountNumber() { return accountNumber; }
-        public String getAccountName() { return accountName; }
-        public double getBalance() { return balance; }
-
+        /** Deposits the given amount into the account. */
         public void deposit(double amount) {
             if (amount <= 0) {
-                System.out.println("  [Error] Deposit amount must be positive.");
+                System.out.println("  [Error] Deposit amount must be greater than 0.");
                 return;
             }
             balance += amount;
-            System.out.printf("  [OK] Deposited %.2f to %s. New balance: %.2f%n",
-                    amount, accountName, balance);
+            System.out.printf("  [OK] Deposited %.2f to %s%n", amount, accountName);
         }
 
+        /** Withdraws the given amount from the account. */
         public void withdraw(double amount) {
             if (amount <= 0) {
-                System.out.println("  [Error] Withdrawal amount must be positive.");
+                System.out.println("  [Error] Withdrawal amount must be greater than 0.");
                 return;
             }
-            if (amount > balance) {
-                System.out.printf("  [Error] Insufficient balance in %s. Available: %.2f%n",
-                        accountName, balance);
-                return;
-            }
-            balance -= amount;
-            System.out.printf("  [OK] Withdrew %.2f from %s. New balance: %.2f%n",
-                    amount, accountName, balance);
-        }
-
-        public void transfer(BankAccount to, double amount) {
-            if (amount <= 0) {
-                System.out.println("  [Error] Transfer amount must be positive.");
-                return;
-            }
-            if (amount > balance) {
-                System.out.printf("  [Error] Insufficient balance in %s. Available: %.2f%n",
-                        accountName, balance);
+            if (balance < amount) {
+                System.out.printf("  [Error] Insufficient balance in %s (Balance: %.2f, Requested: %.2f)%n",
+                        accountName, balance, amount);
                 return;
             }
             balance -= amount;
-            to.balance += amount;
-            System.out.printf("  [OK] Transferred %.2f from %s to %s%n",
-                    amount, accountName, to.accountName);
+            System.out.printf("  [OK] Withdrew %.2f from %s%n", amount, accountName);
         }
 
-        public void printInfo() {
-            System.out.printf("  %-10s | %-10s | Balance: %10.2f%n",
-                    accountNumber, accountName, balance);
+        /** Prints the account details in a table row format. */
+        public void showInfo() {
+            System.out.printf("  %-10s | %-12s | Balance: %10.2f%n", accountNumber, accountName, balance);
         }
     }
 
-    /** Manages a collection of bank accounts. */
-    static class Bank {
-        private String bankName;
-        private List<BankAccount> accounts;
-
-        public Bank(String bankName) {
-            this.bankName = bankName;
-            this.accounts = new ArrayList<>();
+    /** Calculates the total balance of all accounts. */
+    public static double calculateTotalBalance(List<BankAccount> accounts) {
+        double total = 0;
+        for (BankAccount acc : accounts) {
+            total += acc.balance;
         }
+        return total;
+    }
 
-        public void addAccount(BankAccount account) {
-            accounts.add(account);
-            System.out.printf("  [OK] Added account %s (%s) to %s.%n",
-                    account.getAccountNumber(), account.getAccountName(), bankName);
-        }
-
-        public void showAllAccounts() {
-            System.out.printf("  %s — All Accounts (%d):%n", bankName, accounts.size());
-            for (BankAccount acc : accounts) {
-                acc.printInfo();
+    /** Finds the account with the highest balance. */
+    public static BankAccount findHighestBalance(List<BankAccount> accounts) {
+        BankAccount highest = accounts.get(0);
+        for (int i = 1; i < accounts.size(); i++) {
+            if (accounts.get(i).balance > highest.balance) {
+                highest = accounts.get(i);
             }
         }
+        return highest;
+    }
 
-        public double getTotalBalance() {
-            double total = 0;
-            for (BankAccount acc : accounts) {
-                total += acc.getBalance();
+    /** Finds the account with the lowest balance. */
+    public static BankAccount findLowestBalance(List<BankAccount> accounts) {
+        BankAccount lowest = accounts.get(0);
+        for (int i = 1; i < accounts.size(); i++) {
+            if (accounts.get(i).balance < lowest.balance) {
+                lowest = accounts.get(i);
             }
-            return total;
         }
+        return lowest;
+    }
 
-        public void printTotalBalance() {
-            System.out.printf("  Total balance of %s: %.2f%n", bankName, getTotalBalance());
+    /** Prints all accounts in a formatted table. */
+    public static void showAllAccounts(List<BankAccount> accounts) {
+        System.out.printf("  %-10s | %-12s | %s%n", "Account No", "Name", "Balance");
+        System.out.println("  -------------------------------------------");
+        for (BankAccount acc : accounts) {
+            acc.showInfo();
         }
+        System.out.println();
     }
 
     public static void main(String[] args) {
-        System.out.println("=== Practice 09: Bank Account Collection ===");
+        // --- Create a list of bank accounts ---
+        List<BankAccount> accounts = new ArrayList<>();
+        accounts.add(new BankAccount("ACC-1001", "Tareq", 15000));
+        accounts.add(new BankAccount("ACC-1002", "Afsana", 22000));
+        accounts.add(new BankAccount("ACC-1003", "Imtiaz", 8500));
+        accounts.add(new BankAccount("ACC-1004", "Pulok", 31000));
+        accounts.add(new BankAccount("ACC-1005", "Samia", 12000));
+
+        System.out.println("=== All Accounts (Initial) ===");
+        showAllAccounts(accounts);
+
+        // --- Perform transactions ---
+        System.out.println("=== Performing Transactions ===");
+        accounts.get(0).deposit(5000);   // Tareq deposits 5000
+        accounts.get(1).withdraw(3000);  // Afsana withdraws 3000
+        accounts.get(2).deposit(1500);   // Imtiaz deposits 1500
+        accounts.get(3).withdraw(10000); // Pulok withdraws 10000
+        accounts.get(4).deposit(8000);   // Samia deposits 8000
         System.out.println();
 
-        // Create bank
-        Bank bank = new Bank("City Bank");
+        System.out.println("=== All Accounts (After Transactions) ===");
+        showAllAccounts(accounts);
 
-        // Create accounts
-        BankAccount acc1 = new BankAccount("ACC-1001", "Imtiaz", 50000);
-        BankAccount acc2 = new BankAccount("ACC-1002", "Faria", 30000);
-        BankAccount acc3 = new BankAccount("ACC-1003", "Rafi", 45000);
-        BankAccount acc4 = new BankAccount("ACC-1004", "Salma", 60000);
+        // --- Calculate total balance ---
+        double total = calculateTotalBalance(accounts);
+        System.out.printf("  Total Balance of All Accounts: %.2f%n%n", total);
 
-        // Add accounts to bank
-        System.out.println("--- Add Accounts ---");
-        bank.addAccount(acc1);
-        bank.addAccount(acc2);
-        bank.addAccount(acc3);
-        bank.addAccount(acc4);
+        // --- Find highest and lowest balance ---
+        BankAccount highest = findHighestBalance(accounts);
+        BankAccount lowest = findLowestBalance(accounts);
+
+        System.out.println("=== Highest Balance ===");
+        highest.showInfo();
         System.out.println();
 
-        // Show all accounts
-        System.out.println("--- All Accounts ---");
-        bank.showAllAccounts();
-        System.out.println();
-
-        // Total balance before transactions
-        System.out.println("--- Total Balance (Before) ---");
-        bank.printTotalBalance();
-        System.out.println();
-
-        // Perform transactions
-        System.out.println("--- Transactions ---");
-        acc1.deposit(10000);
-        acc2.withdraw(5000);
-        acc3.transfer(acc4, 15000);
-        acc1.transfer(acc2, 20000);
-        System.out.println();
-
-        // Show all accounts after transactions
-        System.out.println("--- All Accounts (After Transactions) ---");
-        bank.showAllAccounts();
-        System.out.println();
-
-        // Total balance after transactions (should be same — money moves within bank)
-        System.out.println("--- Total Balance (After) ---");
-        bank.printTotalBalance();
+        System.out.println("=== Lowest Balance ===");
+        lowest.showInfo();
     }
 }
