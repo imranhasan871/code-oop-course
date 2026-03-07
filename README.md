@@ -1,5 +1,7 @@
 # Professional OOP Training Program
+
 ### Trainer: Zohirul Alam Tiemoon
+
 [learnwithtiemoon.com/professional-oop](https://learnwithtiemoon.com/professional-oop)
 
 ---
@@ -24,6 +26,7 @@ Each practice is implemented in **four languages** side by side so students can 
 > **Goal:** Reinforce fundamentals before diving into OOP — data structures, file I/O, and iteration.
 
 ### Practice 01 — Working with List / ArrayList
+
 **Duration:** 15 min
 
 Create a list of employee names and find all names that **partially match** a given search input (case-insensitive).
@@ -39,6 +42,7 @@ Create a list of employee names and find all names that **partially match** a gi
 ---
 
 ### Practice 02 — Find Min & Max Salary
+
 **Duration:** 15 min
 
 Read employee salary data from [`data/salarysheet.csv`](data/salarysheet.csv) and display the **employee with the highest and lowest salary**.
@@ -53,6 +57,7 @@ Min: Rafi     34000
 ---
 
 ### Practice 03 — Generate a Voucher
+
 **Duration:** 1 hour (Homework)
 
 Read grocery items from [`data/groceryitems.csv`](data/groceryitems.csv), calculate totals, and generate a formatted voucher — displayed on console **and** saved to a `.txt` file.
@@ -81,6 +86,7 @@ Net total    4425.575
 > **Goal:** Learn how to model real-world entities as classes, apply encapsulation, and think in an object-oriented way.
 
 ### Practice 04 — Bank Account
+
 **Duration:** 10 min
 
 Create a `BankAccount` class with properties for account number, account name, and balance. Methods: **deposit**, **withdraw**, and **transfer**. No negative balance allowed.
@@ -90,6 +96,7 @@ Create a `BankAccount` class with properties for account number, account name, a
 ---
 
 ### Practice 05 — Credit Card
+
 **Duration:** 15 min
 
 Design a `CreditCard` class with a max limit of **500K**. Cash withdrawal: daily limit **100K**, per-transaction limit **20K**. Bill payments: no per-transaction limit, total spending must not exceed the max limit.
@@ -130,6 +137,70 @@ Extended Practice 04 — create a `Bank` class that owns a **list of BankAccount
 
 ---
 
+## Session 04 — Association Relationship
+
+> **Goal:** Understand and implement different types of associations — 1-to-1, 1-to-Many, and Many-to-Many — along with real-world system designs that combine multiple association patterns.
+
+### Practice 10 — Customer & Credit Card (1-1 Association)
+
+Model a bank customer who has exactly one credit card. Card number must be digits only, expiration date must be validated, 500K credit limit, track available credit after purchases. Customer must be at least 18 years old.
+
+**Key concepts:** 1-to-1 Association, input validation, date-based expiration
+
+---
+
+### Practice 11 — Car & License Plate (1-1 Association)
+
+Model a car with its license plate. Validate plate expiration. Track owner, manufacturer, model, year. Car age must be ≤ 20 years for registration renewal.
+
+**Key concepts:** 1-to-1 Association, age-based eligibility, date handling
+
+---
+
+### Practice 12 — Doctor & Patients (1-Many Association)
+
+Model a hospital system where a doctor manages multiple patients. Doctors can schedule appointments, diagnose, prescribe treatments, and discharge patients. Patients can view appointments and track medical history.
+
+**Key concepts:** 1-to-Many Association, list management, business workflow
+
+---
+
+### Practice 13 — Patient & Medications (Many-Many Association)
+
+Model a prescription system where patients can be prescribed multiple medications and each medication can be prescribed to multiple patients. A `Prescription` junction class links them. Forbidden medication combinations must be enforced:
+
+- Antibiotics & Statins
+- Muscle Relaxants & CNS Depressants
+- Anti-Inflammatories & Anticoagulants
+
+**Key concepts:** Many-to-Many Association, junction class, conflict detection
+
+---
+
+### Practice 14 — Smart Parking System
+
+Manage vehicle entry, slot assignment, duration-based charges, and exit. Track real-time slot availability. Charge based on parking duration and vehicle type.
+
+**Key concepts:** Multiple associations (Vehicle, ParkingSlot, ParkingLot), time-based calculations
+
+---
+
+### Practice 15 — Restaurant Order Management
+
+Customers place orders with multiple menu items. Calculate total bill. Kitchen updates order status through Pending → Cooking → Served. Payment after order is served.
+
+**Key concepts:** Multiple associations (MenuItem, Order, Kitchen, Restaurant), state management
+
+---
+
+### Practice 16 — Library Management System
+
+Library with books (each having copies). Members borrow books — Regular members max 3, Premium max 5. Late return fines: 10 taka/day (Regular), 5 taka/day (Premium).
+
+**Key concepts:** Multiple associations (Book, Member, BorrowRecord, Library), membership-based rules, fine calculation
+
+---
+
 ## Project Structure
 
 ```
@@ -150,6 +221,14 @@ code-oop-course/
 │       ├── practice-07.go
 │       ├── practice-08.go
 │       └── practice-09.go
+│   └── 04. Association Relationship/
+│       ├── practice-10.go
+│       ├── practice-11.go
+│       ├── practice-12.go
+│       ├── practice-13.go
+│       ├── practice-14.go
+│       ├── practice-15.go
+│       └── practice-16.go
 │
 ├── Java/
 │   ├── 01. Introduction/
@@ -163,6 +242,14 @@ code-oop-course/
 │       ├── Practice07.java
 │       ├── Practice08.java
 │       └── Practice09.java
+│   └── 04. Association Relationship/
+│       ├── Practice10.java
+│       ├── Practice11.java
+│       ├── Practice12.java
+│       ├── Practice13.java
+│       ├── Practice14.java
+│       ├── Practice15.java
+│       └── Practice16.java
 │
 ├── C#/
 │   ├── 01. Introduction/
@@ -176,6 +263,14 @@ code-oop-course/
 │       ├── Practice07.cs
 │       ├── Practice08.cs
 │       └── Practice09.cs
+│   └── 04. Association Relationship/
+│       ├── Practice10.cs
+│       ├── Practice11.cs
+│       ├── Practice12.cs
+│       ├── Practice13.cs
+│       ├── Practice14.cs
+│       ├── Practice15.cs
+│       └── Practice16.cs
 │
 └── Python/
     ├── 01. Introduction/
@@ -189,6 +284,14 @@ code-oop-course/
         ├── practice_07.py
         ├── practice_08.py
         └── practice_09.py
+    └── 04. Association Relationship/
+        ├── practice_10.py
+        ├── practice_11.py
+        ├── practice_12.py
+        ├── practice_13.py
+        ├── practice_14.py
+        ├── practice_15.py
+        └── practice_16.py
 ```
 
 ---

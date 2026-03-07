@@ -2,9 +2,10 @@
 
 ## Prerequisites
 
-Install Go from the official website: https://go.dev/dl/
+Install Go from the official website: <https://go.dev/dl/>
 
 Verify installation:
+
 ```bash
 go version
 # go version go1.22.x ...
@@ -40,6 +41,29 @@ go run practice-03.go
 | [`practice-01.go`](01.%20Introduction/practice-01.go) | Partial name search in a List (slice) |
 | [`practice-02.go`](01.%20Introduction/practice-02.go) | Read CSV → find Min & Max salary |
 | [`practice-03.go`](01.%20Introduction/practice-03.go) | Generate & save a formatted voucher |
+
+### Session 03 — Understanding Class & Object
+
+| File | Topic |
+|------|-------|
+| [`practice-04.go`](03.%20Understanding%20Class%20%26%20Object/practice-04.go) | BankAccount class — deposit, withdraw, transfer |
+| [`practice-05.go`](03.%20Understanding%20Class%20%26%20Object/practice-05.go) | CreditCard class — spending limits & cash rules |
+| [`practice-06.go`](03.%20Understanding%20Class%20%26%20Object/practice-06.go) | Car Rental system (OOAD) |
+| [`practice-07.go`](03.%20Understanding%20Class%20%26%20Object/practice-07.go) | School Homework system (OOAD) |
+| [`practice-08.go`](03.%20Understanding%20Class%20%26%20Object/practice-08.go) | Movie Streaming platform (OOAD) |
+| [`practice-09.go`](03.%20Understanding%20Class%20%26%20Object/practice-09.go) | Bank Account Collection — list of accounts |
+
+### Session 04 — Association Relationship
+
+| File | Topic |
+|------|-------|
+| [`practice-10.go`](04.%20Association%20Relationship/practice-10.go) | Customer & Credit Card — 1-1 Association |
+| [`practice-11.go`](04.%20Association%20Relationship/practice-11.go) | Car & License Plate — 1-1 Association |
+| [`practice-12.go`](04.%20Association%20Relationship/practice-12.go) | Doctor & Patients — 1-Many Association |
+| [`practice-13.go`](04.%20Association%20Relationship/practice-13.go) | Patient & Medications — Many-Many Association |
+| [`practice-14.go`](04.%20Association%20Relationship/practice-14.go) | Smart Parking System |
+| [`practice-15.go`](04.%20Association%20Relationship/practice-15.go) | Restaurant Order Management |
+| [`practice-16.go`](04.%20Association%20Relationship/practice-16.go) | Library Management System |
 
 ---
 

@@ -2,9 +2,10 @@
 
 ## Prerequisites
 
-Install the Java Development Kit (JDK 11 or higher): https://adoptium.net/
+Install the Java Development Kit (JDK 11 or higher): <https://adoptium.net/>
 
 Verify installation:
+
 ```bash
 java -version
 javac -version
@@ -48,6 +49,29 @@ java Practice03
 | [`Practice01.java`](01.%20Introduction/Practice01.java) | Partial name search in an ArrayList |
 | [`Practice02.java`](01.%20Introduction/Practice02.java) | Read CSV → find Min & Max salary |
 | [`Practice03.java`](01.%20Introduction/Practice03.java) | Generate & save a formatted voucher |
+
+### Session 03 — Understanding Class & Object
+
+| File | Topic |
+|------|-------|
+| [`Practice04.java`](03.%20Understanding%20Class%20%26%20Object/Practice04.java) | BankAccount class — deposit, withdraw, transfer |
+| [`Practice05.java`](03.%20Understanding%20Class%20%26%20Object/Practice05.java) | CreditCard class — spending limits & cash rules |
+| [`Practice06.java`](03.%20Understanding%20Class%20%26%20Object/Practice06.java) | Car Rental system (OOAD) |
+| [`Practice07.java`](03.%20Understanding%20Class%20%26%20Object/Practice07.java) | School Homework system (OOAD) |
+| [`Practice08.java`](03.%20Understanding%20Class%20%26%20Object/Practice08.java) | Movie Streaming platform (OOAD) |
+| [`Practice09.java`](03.%20Understanding%20Class%20%26%20Object/Practice09.java) | Bank Account Collection — list of accounts |
+
+### Session 04 — Association Relationship
+
+| File | Topic |
+|------|-------|
+| [`Practice10.java`](04.%20Association%20Relationship/Practice10.java) | Customer & Credit Card — 1-1 Association |
+| [`Practice11.java`](04.%20Association%20Relationship/Practice11.java) | Car & License Plate — 1-1 Association |
+| [`Practice12.java`](04.%20Association%20Relationship/Practice12.java) | Doctor & Patients — 1-Many Association |
+| [`Practice13.java`](04.%20Association%20Relationship/Practice13.java) | Patient & Medications — Many-Many Association |
+| [`Practice14.java`](04.%20Association%20Relationship/Practice14.java) | Smart Parking System |
+| [`Practice15.java`](04.%20Association%20Relationship/Practice15.java) | Restaurant Order Management |
+| [`Practice16.java`](04.%20Association%20Relationship/Practice16.java) | Library Management System |
 
 ---
 

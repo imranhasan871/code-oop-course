@@ -26,6 +26,16 @@ python practice_06.py
 python practice_07.py
 python practice_08.py
 python practice_09.py
+
+# Session 04 — Association Relationship
+cd Python/04.\ Association\ Relationship/
+python practice_10.py
+python practice_11.py
+python practice_12.py
+python practice_13.py
+python practice_14.py
+python practice_15.py
+python practice_16.py
 ```
 
 > **Note:** Practice 02 and 03 read data files from `../../data/`, so make sure you run them from inside the session folder.
@@ -52,6 +62,18 @@ python practice_09.py
 | `practice_07.py` | 07 | School Homework system (OOAD) |
 | `practice_08.py` | 08 | Movie Streaming platform (OOAD) |
 | `practice_09.py` | 09 | Bank Account Collection — list of accounts |
+
+### Session 04 — Association Relationship
+
+| File | Practice | Description |
+|------|----------|-------------|
+| `practice_10.py` | 10 | Customer & Credit Card — 1-1 Association |
+| `practice_11.py` | 11 | Car & License Plate — 1-1 Association |
+| `practice_12.py` | 12 | Doctor & Patients — 1-Many Association |
+| `practice_13.py` | 13 | Patient & Medications — Many-Many Association |
+| `practice_14.py` | 14 | Smart Parking System |
+| `practice_15.py` | 15 | Restaurant Order Management |
+| `practice_16.py` | 16 | Library Management System |
 
 ---
 
