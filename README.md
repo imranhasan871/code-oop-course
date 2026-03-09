@@ -201,6 +201,48 @@ Library with books (each having copies). Members borrow books — Regular member
 
 ---
 
+## Session 05 — Inheritance Relationship
+
+> **Goal:** Learn inheritance (IS-A relationship), method overriding, constructor chaining, upcasting, downcasting, and runtime polymorphism.
+
+### Practice 17 — Vehicle Rental System (Inheritance)
+
+**Duration:** 30 min
+
+A vehicle rental company rents out Cars, Bikes, and Trucks. All vehicles share Brand, Model, and Year. Each type has different rental pricing:
+
+- **Car:** $50/day. 10% discount if older than 5 years.
+- **Bike:** $15/day. 15% discount if rental period > 7 days.
+- **Truck:** $100/day + $100/day additional maintenance fee.
+
+**Key concepts:** Inheritance, IS-A relationship, base class, subclass
+
+---
+
+### Practice 18 — Method Overriding & Constructor Chaining
+
+**Duration:** 20 min
+
+Apply method overriding and constructor chaining to the vehicle rental system from Practice 17:
+
+- Constructor chaining between base class and subclasses (`super()` / `base()`)
+- Override `calculateRentalCost()` in each subclass
+- Override `toString()` / `__str__()` for string representation
+
+**Key concepts:** Method overriding, constructor chaining, `@Override` / `virtual` + `override`, `toString()`
+
+---
+
+### Practice 19 — Runtime Polymorphism
+
+**Duration:** 15 min
+
+Display the brand, model, year of manufacture, and rental price for one car, two bikes, and one truck — each rented separately for 10 days. Use a single collection of Vehicle references.
+
+**Key concepts:** Upcasting, downcasting, runtime polymorphism, method dispatch
+
+---
+
 ## Project Structure
 
 ```
@@ -221,14 +263,18 @@ code-oop-course/
 │       ├── practice-07.go
 │       ├── practice-08.go
 │       └── practice-09.go
-│   └── 04. Association Relationship/
-│       ├── practice-10.go
-│       ├── practice-11.go
-│       ├── practice-12.go
-│       ├── practice-13.go
-│       ├── practice-14.go
-│       ├── practice-15.go
-│       └── practice-16.go
+│   ├── 04. Association Relationship/
+│   │   ├── practice-10.go
+│   │   ├── practice-11.go
+│   │   ├── practice-12.go
+│   │   ├── practice-13.go
+│   │   ├── practice-14.go
+│   │   ├── practice-15.go
+│   │   └── practice-16.go
+│   └── 05. Inheritance Relationship/
+│       ├── practice-17.go
+│       ├── practice-18.go
+│       └── practice-19.go
 │
 ├── Java/
 │   ├── 01. Introduction/
@@ -242,14 +288,18 @@ code-oop-course/
 │       ├── Practice07.java
 │       ├── Practice08.java
 │       └── Practice09.java
-│   └── 04. Association Relationship/
-│       ├── Practice10.java
-│       ├── Practice11.java
-│       ├── Practice12.java
-│       ├── Practice13.java
-│       ├── Practice14.java
-│       ├── Practice15.java
-│       └── Practice16.java
+│   ├── 04. Association Relationship/
+│   │   ├── Practice10.java
+│   │   ├── Practice11.java
+│   │   ├── Practice12.java
+│   │   ├── Practice13.java
+│   │   ├── Practice14.java
+│   │   ├── Practice15.java
+│   │   └── Practice16.java
+│   └── 05. Inheritance Relationship/
+│       ├── Practice17.java
+│       ├── Practice18.java
+│       └── Practice19.java
 │
 ├── C#/
 │   ├── 01. Introduction/
@@ -263,14 +313,18 @@ code-oop-course/
 │       ├── Practice07.cs
 │       ├── Practice08.cs
 │       └── Practice09.cs
-│   └── 04. Association Relationship/
-│       ├── Practice10.cs
-│       ├── Practice11.cs
-│       ├── Practice12.cs
-│       ├── Practice13.cs
-│       ├── Practice14.cs
-│       ├── Practice15.cs
-│       └── Practice16.cs
+│   ├── 04. Association Relationship/
+│   │   ├── Practice10.cs
+│   │   ├── Practice11.cs
+│   │   ├── Practice12.cs
+│   │   ├── Practice13.cs
+│   │   ├── Practice14.cs
+│   │   ├── Practice15.cs
+│   │   └── Practice16.cs
+│   └── 05. Inheritance Relationship/
+│       ├── Practice17.cs
+│       ├── Practice18.cs
+│       └── Practice19.cs
 │
 └── Python/
     ├── 01. Introduction/
@@ -284,14 +338,18 @@ code-oop-course/
         ├── practice_07.py
         ├── practice_08.py
         └── practice_09.py
-    └── 04. Association Relationship/
-        ├── practice_10.py
-        ├── practice_11.py
-        ├── practice_12.py
-        ├── practice_13.py
-        ├── practice_14.py
-        ├── practice_15.py
-        └── practice_16.py
+    ├── 04. Association Relationship/
+    │   ├── practice_10.py
+    │   ├── practice_11.py
+    │   ├── practice_12.py
+    │   ├── practice_13.py
+    │   ├── practice_14.py
+    │   ├── practice_15.py
+    │   └── practice_16.py
+    └── 05. Inheritance Relationship/
+        ├── practice_17.py
+        ├── practice_18.py
+        └── practice_19.py
 ```
 
 ---

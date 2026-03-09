@@ -65,6 +65,14 @@ go run practice-03.go
 | [`practice-15.go`](04.%20Association%20Relationship/practice-15.go) | Restaurant Order Management |
 | [`practice-16.go`](04.%20Association%20Relationship/practice-16.go) | Library Management System |
 
+### Session 05 — Inheritance Relationship
+
+| File | Topic |
+|------|-------|
+| [`practice-17.go`](05.%20Inheritance%20Relationship/practice-17.go) | Vehicle Rental — Inheritance (IS-A) |
+| [`practice-18.go`](05.%20Inheritance%20Relationship/practice-18.go) | Method Overriding & Constructor Chaining |
+| [`practice-19.go`](05.%20Inheritance%20Relationship/practice-19.go) | Runtime Polymorphism |
+
 ---
 
 ## Key Go Concepts Used

@@ -73,6 +73,14 @@ java Practice03
 | [`Practice15.java`](04.%20Association%20Relationship/Practice15.java) | Restaurant Order Management |
 | [`Practice16.java`](04.%20Association%20Relationship/Practice16.java) | Library Management System |
 
+### Session 05 — Inheritance Relationship
+
+| File | Topic |
+|------|-------|
+| [`Practice17.java`](05.%20Inheritance%20Relationship/Practice17.java) | Vehicle Rental — Inheritance (IS-A) |
+| [`Practice18.java`](05.%20Inheritance%20Relationship/Practice18.java) | Method Overriding & Constructor Chaining |
+| [`Practice19.java`](05.%20Inheritance%20Relationship/Practice19.java) | Runtime Polymorphism |
+
 ---
 
 ## Key Java Concepts Used

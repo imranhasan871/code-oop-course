@@ -36,6 +36,12 @@ python practice_13.py
 python practice_14.py
 python practice_15.py
 python practice_16.py
+
+# Session 05 — Inheritance Relationship
+cd Python/05.\ Inheritance\ Relationship/
+python practice_17.py
+python practice_18.py
+python practice_19.py
 ```
 
 > **Note:** Practice 02 and 03 read data files from `../../data/`, so make sure you run them from inside the session folder.
@@ -74,6 +80,14 @@ python practice_16.py
 | `practice_14.py` | 14 | Smart Parking System |
 | `practice_15.py` | 15 | Restaurant Order Management |
 | `practice_16.py` | 16 | Library Management System |
+
+### Session 05 — Inheritance Relationship
+
+| File | Practice | Description |
+|------|----------|-------------|
+| `practice_17.py` | 17 | Vehicle Rental — Inheritance (IS-A) |
+| `practice_18.py` | 18 | Method Overriding & Constructor Chaining |
+| `practice_19.py` | 19 | Runtime Polymorphism |
 
 ---
 

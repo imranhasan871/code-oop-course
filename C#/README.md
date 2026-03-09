@@ -83,6 +83,14 @@ dotnet-script Practice03.cs
 | [`Practice15.cs`](04.%20Association%20Relationship/Practice15.cs) | Restaurant Order Management |
 | [`Practice16.cs`](04.%20Association%20Relationship/Practice16.cs) | Library Management System |
 
+### Session 05 — Inheritance Relationship
+
+| File | Topic |
+|------|-------|
+| [`Practice17.cs`](05.%20Inheritance%20Relationship/Practice17.cs) | Vehicle Rental — Inheritance (IS-A) |
+| [`Practice18.cs`](05.%20Inheritance%20Relationship/Practice18.cs) | Method Overriding & Constructor Chaining |
+| [`Practice19.cs`](05.%20Inheritance%20Relationship/Practice19.cs) | Runtime Polymorphism |
+
 ---
 
 ## Key C# Concepts Used
