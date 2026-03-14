@@ -243,6 +243,34 @@ Display the brand, model, year of manufacture, and rental price for one car, two
 
 ---
 
+## Session 06 — Software Design Principles (SOLID & More)
+
+> **Goal:** Apply core software design principles to produce maintainable, extensible, and testable object-oriented designs.
+
+### Practice 17 — Applying SRP (Single Responsibility Principle)
+
+Refactor an `OnDemandAgentService` that handles too many concerns into smaller focused classes. Keep orchestration in one class, and extract persistence, notification, logging, and matching responsibilities.
+
+**Key concepts:** SRP, separation of concerns, orchestration vs implementation details
+
+---
+
+### Practice 18 — Applying DIP (Dependency Inversion Principle)
+
+Design a payment processing system where `PaymentService` depends on a payment abstraction instead of concrete payment providers (Credit Card, bKash, PayPal, Bank Transfer).
+
+**Key concepts:** DIP, abstraction, extensibility, pluggable strategy implementations
+
+---
+
+### Practice 19 — Applying DRY (Don't Repeat Yourself)
+
+Refactor repeated business logic (for example, invoice and discount calculations) into reusable components so each rule exists in one authoritative place.
+
+**Key concepts:** DRY, reuse, centralized business rules, maintainability
+
+---
+
 ## Project Structure
 
 ```
@@ -275,6 +303,10 @@ code-oop-course/
 │       ├── practice-17.go
 │       ├── practice-18.go
 │       └── practice-19.go
+│   └── 06. Software Design Principles SOLID & More/
+│       ├── practice-17.go
+│       ├── practice-18.go
+│       └── practice-19.go
 │
 ├── Java/
 │   ├── 01. Introduction/
@@ -297,6 +329,10 @@ code-oop-course/
 │   │   ├── Practice15.java
 │   │   └── Practice16.java
 │   └── 05. Inheritance Relationship/
+│       ├── Practice17.java
+│       ├── Practice18.java
+│       └── Practice19.java
+│   └── 06. Software Design Principles SOLID & More/
 │       ├── Practice17.java
 │       ├── Practice18.java
 │       └── Practice19.java
@@ -325,6 +361,10 @@ code-oop-course/
 │       ├── Practice17.cs
 │       ├── Practice18.cs
 │       └── Practice19.cs
+│   └── 06. Software Design Principles SOLID & More/
+│       ├── Practice17.cs
+│       ├── Practice18.cs
+│       └── Practice19.cs
 │
 └── Python/
     ├── 01. Introduction/
@@ -350,6 +390,10 @@ code-oop-course/
         ├── practice_17.py
         ├── practice_18.py
         └── practice_19.py
+    └── 06. Software Design Principles SOLID & More/
+        ├── practice_17_srp.py
+        ├── practice_18_dip.py
+        └── practice_19_dry.py
 ```
 
 ---

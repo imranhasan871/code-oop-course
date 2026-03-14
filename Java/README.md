@@ -81,6 +81,14 @@ java Practice03
 | [`Practice18.java`](05.%20Inheritance%20Relationship/Practice18.java) | Method Overriding & Constructor Chaining |
 | [`Practice19.java`](05.%20Inheritance%20Relationship/Practice19.java) | Runtime Polymorphism |
 
+### Session 06 — Software Design Principles SOLID & More
+
+| File | Topic |
+|------|-------|
+| [`Practice17.java`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/Practice17.java) | Applying SRP (Single Responsibility Principle) |
+| [`Practice18.java`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/Practice18.java) | Applying DIP (Dependency Inversion Principle) |
+| [`Practice19.java`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/Practice19.java) | Applying DRY (Don't Repeat Yourself) |
+
 ---
 
 ## Key Java Concepts Used
