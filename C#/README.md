@@ -91,6 +91,14 @@ dotnet-script Practice03.cs
 | [`Practice18.cs`](05.%20Inheritance%20Relationship/Practice18.cs) | Method Overriding & Constructor Chaining |
 | [`Practice19.cs`](05.%20Inheritance%20Relationship/Practice19.cs) | Runtime Polymorphism |
 
+### Session 06 — Software Design Principles SOLID & More
+
+| File | Topic |
+|------|-------|
+| [`Practice17.cs`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/Practice17.cs) | Applying SRP (Single Responsibility Principle) |
+| [`Practice18.cs`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/Practice18.cs) | Applying DIP (Dependency Inversion Principle) |
+| [`Practice19.cs`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/Practice19.cs) | Applying DRY (Don't Repeat Yourself) |
+
 ---
 
 ## Key C# Concepts Used

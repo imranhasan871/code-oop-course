@@ -73,6 +73,14 @@ go run practice-03.go
 | [`practice-18.go`](05.%20Inheritance%20Relationship/practice-18.go) | Method Overriding & Constructor Chaining |
 | [`practice-19.go`](05.%20Inheritance%20Relationship/practice-19.go) | Runtime Polymorphism |
 
+### Session 06 — Software Design Principles SOLID & More
+
+| File | Topic |
+|------|-------|
+| [`practice-17.go`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/practice-17.go) | Applying SRP (Single Responsibility Principle) |
+| [`practice-18.go`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/practice-18.go) | Applying DIP (Dependency Inversion Principle) |
+| [`practice-19.go`](06.%20Software%20Design%20Principles%20SOLID%20%26%20More/practice-19.go) | Applying DRY (Don't Repeat Yourself) |
+
 ---
 
 ## Key Go Concepts Used

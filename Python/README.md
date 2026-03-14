@@ -42,6 +42,12 @@ cd Python/05.\ Inheritance\ Relationship/
 python practice_17.py
 python practice_18.py
 python practice_19.py
+
+# Session 06 — Software Design Principles SOLID & More
+cd Python/06.\ Software\ Design\ Principles\ SOLID\ \&\ More/
+python practice_17_srp.py
+python practice_18_dip.py
+python practice_19_dry.py
 ```
 
 > **Note:** Practice 02 and 03 read data files from `../../data/`, so make sure you run them from inside the session folder.
@@ -88,6 +94,14 @@ python practice_19.py
 | `practice_17.py` | 17 | Vehicle Rental — Inheritance (IS-A) |
 | `practice_18.py` | 18 | Method Overriding & Constructor Chaining |
 | `practice_19.py` | 19 | Runtime Polymorphism |
+
+### Session 06 — Software Design Principles SOLID & More
+
+| File | Practice | Description |
+|------|----------|-------------|
+| `practice_17_srp.py` | 17 | SRP refactor for OnDemandAgentService |
+| `practice_18_dip.py` | 18 | DIP-based payment processing system |
+| `practice_19_dry.py` | 19 | DRY refactor for invoice and discount logic |
 
 ---
 
